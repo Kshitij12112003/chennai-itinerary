@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import confetti from "canvas-confetti";
 
 const PHONE = "+918382858019";
 
@@ -17,6 +18,7 @@ const places = [
     map: "",
     type: "start",
   },
+
   {
     time: "5:30 AM",
     period: "SUNRISE",
@@ -30,6 +32,7 @@ const places = [
     map: "https://maps.app.goo.gl/Z9YDKLT4ZVTs8Mjq5",
     type: "beach",
   },
+
   {
     time: "7:30 – 8:00 AM",
     period: "BREAKFAST",
@@ -43,6 +46,7 @@ const places = [
     map: "https://share.google/oTCt8THkO92TRlVOg",
     type: "food",
   },
+
   {
     time: "9:30 – 10:00 AM",
     period: "EXPERIENCE",
@@ -51,10 +55,12 @@ const places = [
     emoji: "🐠",
     description:
       "Explore marine life and enjoy an amazing underwater experience at VGP Marine Kingdom.",
-    address: "SH 49, Injambakkam, Chennai, Tamil Nadu 600115",
+    address:
+      "SH 49, Injambakkam, Chennai, Tamil Nadu 600115",
     map: "https://maps.app.goo.gl/Jo9AprxjLDgZJWVXA",
     type: "experience",
   },
+
   {
     time: "1:00 PM",
     period: "LUNCH",
@@ -67,11 +73,12 @@ const places = [
     map: "https://maps.app.goo.gl/husbvb7wJH8aiMgA8",
     type: "food",
   },
+
   {
     time: "AFTER LUNCH",
     period: "RELAX",
     title: "VGP Golden Beach",
-    subtitle: "Beach time",
+    subtitle: "Beach time · ECR",
     emoji: "🏖️",
     description:
       "Relax by the sea, enjoy the beach and spend some peaceful time together after lunch.",
@@ -79,6 +86,7 @@ const places = [
     map: "https://maps.app.goo.gl/QXNqiX4HnXW86L648",
     type: "beach",
   },
+
   {
     time: "4:00 – 5:00 PM",
     period: "SUNSET",
@@ -91,6 +99,7 @@ const places = [
     map: "https://share.google/uErgC5K1nRVaIar3q",
     type: "beach",
   },
+
   {
     time: "EVENING",
     period: "DINNER",
@@ -107,8 +116,77 @@ const places = [
 
 export default function Page() {
   const [selected, setSelected] = useState<number | null>(null);
-  const [showTicket, setShowTicket] = useState(false);
-  const [showCrackers, setShowCrackers] = useState(false);
+
+  // NEW: completed locations
+  const [completed, setCompleted] = useState<number[]>([]);
+
+  // NEW: final celebration
+  const [journeyCompleted, setJourneyCompleted] = useState(false);
+
+  const allCompleted = completed.length === places.length;
+
+  function triggerConfetti() {
+    confetti({
+      particleCount: 120,
+      spread: 80,
+      startVelocity: 35,
+      origin: {
+        x: 0.5,
+        y: 0.65,
+      },
+    });
+  }
+
+  function triggerBigCelebration() {
+    const duration = 3000;
+    const animationEnd = Date.now() + duration;
+
+    const interval = window.setInterval(() => {
+      const timeLeft = animationEnd - Date.now();
+
+      if (timeLeft <= 0) {
+        window.clearInterval(interval);
+        return;
+      }
+
+      confetti({
+        particleCount: 50,
+        spread: 100,
+        startVelocity: 40,
+        origin: {
+          x: Math.random(),
+          y: Math.random() * 0.5,
+        },
+      });
+    }, 250);
+  }
+
+  function toggleComplete(index: number) {
+    const alreadyCompleted = completed.includes(index);
+
+    if (alreadyCompleted) {
+      setCompleted((prev) =>
+        prev.filter((item) => item !== index)
+      );
+      return;
+    }
+
+    const newCompleted = [...completed, index];
+
+    setCompleted(newCompleted);
+
+    // Normal celebration for each completed place
+    triggerConfetti();
+
+    // Final celebration after EVERY location is completed
+    if (newCompleted.length === places.length) {
+      setJourneyCompleted(true);
+
+      setTimeout(() => {
+        triggerBigCelebration();
+      }, 300);
+    }
+  }
 
   return (
     <main className="site">
@@ -256,144 +334,233 @@ export default function Page() {
         </div>
 
 
+        {/* =========================
+            PROGRESS
+        ========================== */}
+
+        <div className="progressBox">
+
+          <div className="progressText">
+
+            <span>
+              JOURNEY PROGRESS
+            </span>
+
+            <strong>
+              {completed.length} / {places.length}
+            </strong>
+
+          </div>
+
+          <div className="progressTrack">
+
+            <div
+              className="progressFill"
+              style={{
+                width: `${(completed.length / places.length) * 100}%`,
+              }}
+            />
+
+          </div>
+
+        </div>
+
+
         <div className="timeline">
 
           <div className="timelineLine" />
 
-          {places.map((place, index) => (
+          {places.map((place, index) => {
 
-            <article
-              className={`timelineItem ${
-                selected === index ? "active" : ""
-              }`}
-              key={place.title}
-            >
+            const isCompleted =
+              completed.includes(index);
 
-              <div className="timelineDot">
-                <span>
-                  {index + 1}
-                </span>
-              </div>
+            const isSelected =
+              selected === index;
 
+            return (
 
-              <div className="time">
-                {place.time}
-
-                <small>
-                  {place.period}
-                </small>
-              </div>
-
-
-              <div
-                className={`placeCard ${place.type} ${
-                  selected === index
-                    ? "activeCard"
-                    : ""
+              <article
+                className={`timelineItem ${
+                  isSelected ? "active" : ""
+                } ${
+                  isCompleted ? "completedItem" : ""
                 }`}
-                onClick={() =>
-                  setSelected(
-                    selected === index
-                      ? null
-                      : index
-                  )
-                }
+                key={place.title}
               >
 
-                <div className="cardTop">
+                <div
+                  className={`timelineDot ${
+                    isCompleted
+                      ? "completedDot"
+                      : ""
+                  }`}
+                >
 
-                  <div className="placeEmoji">
-                    {place.emoji}
-                  </div>
-
-                  <div className="cardArrow">
-                    {selected === index
-                      ? "−"
-                      : "+"}
-                  </div>
+                  <span>
+                    {isCompleted
+                      ? "✓"
+                      : index + 1}
+                  </span>
 
                 </div>
 
 
-                <h3>
-                  {place.title}
-                </h3>
+                <div className="time">
 
-                <p className="subtitle">
-                  {place.subtitle}
-                </p>
+                  {place.time}
+
+                  <small>
+                    {place.period}
+                  </small>
+
+                </div>
 
 
-                <div className="cardDetails">
+                <div
+                  className={`placeCard ${place.type} ${
+                    isSelected ? "activeCard" : ""
+                  } ${
+                    isCompleted ? "completedCard" : ""
+                  }`}
+                  onClick={() =>
+                    setSelected(
+                      isSelected
+                        ? null
+                        : index
+                    )
+                  }
+                >
 
-                  <p>
-                    {place.description}
+                  <div className="cardTop">
+
+                    <div className="placeEmoji">
+                      {isCompleted
+                        ? "✨"
+                        : place.emoji}
+                    </div>
+
+                    <div className="cardArrow">
+                      {isSelected
+                        ? "−"
+                        : "+"}
+                    </div>
+
+                  </div>
+
+
+                  <h3>
+                    {place.title}
+                  </h3>
+
+                  <p className="subtitle">
+                    {place.subtitle}
                   </p>
 
 
-                  {place.address && (
+                  <div className="cardDetails">
 
-                    <div className="address">
-
-                      <span>
-                        📍
-                      </span>
-
-                      <span>
-                        {place.address}
-                      </span>
-
-                    </div>
-
-                  )}
+                    <p>
+                      {place.description}
+                    </p>
 
 
-                  {place.map && (
+                    {place.address && (
 
-                    <a
-                      href={place.map}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="mapButton"
-                      onClick={(e) =>
-                        e.stopPropagation()
-                      }
-                    >
-                      Open location ↗
-                    </a>
+                      <div className="address">
 
-                  )}
+                        <span>
+                          📍
+                        </span>
+
+                        <span>
+                          {place.address}
+                        </span>
+
+                      </div>
+
+                    )}
 
 
-                  {/* VGP TICKET */}
+                    {place.map && (
 
-                  {place.title ===
-                    "VGP Marine Kingdom" && (
-
-                    <div
-                      className="ticketArea"
-                      onClick={(e) =>
-                        e.stopPropagation()
-                      }
-                    >
-
-                      <button
-                        type="button"
-                        className="ticketButton"
-                        onClick={() =>
-                          setShowTicket(
-                            !showTicket
-                          )
+                      <a
+                        href={place.map}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="mapButton"
+                        onClick={(e) =>
+                          e.stopPropagation()
                         }
                       >
-                        🎟️{" "}
-                        {showTicket
-                          ? "Hide Ticket"
-                          : "View Ticket"}
-                      </button>
+                        Open location ↗
+                      </a>
+
+                    )}
 
 
-                      {showTicket && (
+                    {/* =========================
+                        MARK COMPLETE
+                    ========================== */}
+
+                    <button
+                      type="button"
+                      className={`checkInButton ${
+                        isCompleted
+                          ? "checked"
+                          : ""
+                      }`}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        toggleComplete(index);
+                      }}
+                    >
+
+                      {isCompleted ? (
+                        <>
+                          ✓ Completed! ✨
+                        </>
+                      ) : (
+                        <>
+                          □ Mark Complete
+                        </>
+                      )}
+
+                    </button>
+
+
+                    {/* VGP TICKET */}
+
+                    {place.title ===
+                      "VGP Marine Kingdom" && (
+
+                      <div
+                        className="ticketArea"
+                        onClick={(e) =>
+                          e.stopPropagation()
+                        }
+                      >
+
+                        <button
+                          type="button"
+                          className="ticketButton"
+                          onClick={() => {
+                            // Just open the ticket
+                            const image =
+                              document.getElementById(
+                                "vgp-ticket"
+                              );
+
+                            if (image) {
+                              image.scrollIntoView({
+                                behavior: "smooth",
+                                block: "center",
+                              });
+                            }
+                          }}
+                        >
+                          🎟️ View Ticket
+                        </button>
 
                         <div className="ticketBox">
 
@@ -402,6 +569,7 @@ export default function Page() {
                           </p>
 
                           <img
+                            id="vgp-ticket"
                             src="/vgp-ticket.jpg"
                             alt="VGP Marine Kingdom ticket"
                             className="ticketImage"
@@ -418,23 +586,122 @@ export default function Page() {
 
                         </div>
 
-                      )}
+                      </div>
 
-                    </div>
+                    )}
 
-                  )}
+                  </div>
 
                 </div>
 
-              </div>
+              </article>
 
-            </article>
+            );
+          })}
 
-          ))}
+        </div>
+
+
+        {/* =========================
+            FINAL COMPLETE BUTTON
+        ========================== */}
+
+        <div className="completeJourney">
+
+          {!allCompleted && (
+
+            <div className="completeHint">
+              Complete every stop to finish the journey ✨
+            </div>
+
+          )}
+
+          <button
+            type="button"
+            className={`finishButton ${
+              allCompleted
+                ? "ready"
+                : ""
+            }`}
+            disabled={!allCompleted}
+            onClick={() => {
+
+              if (!allCompleted) return;
+
+              setJourneyCompleted(true);
+
+              triggerBigCelebration();
+
+              setTimeout(() => {
+                document
+                  .getElementById("celebration")
+                  ?.scrollIntoView({
+                    behavior: "smooth",
+                  });
+              }, 400);
+
+            }}
+          >
+
+            {allCompleted
+              ? "🎉 Complete Our Chennai Day"
+              : `🔒 Complete All ${places.length} Stops First`}
+
+          </button>
 
         </div>
 
       </section>
+
+
+      {/* =========================
+          CELEBRATION
+      ========================== */}
+
+      {journeyCompleted && (
+
+        <section
+          id="celebration"
+          className="celebration"
+        >
+
+          <div className="celebrationGlow" />
+
+          <div className="celebrationContent">
+
+            <div className="celebrationEmoji">
+              🎉 ✨ 🎊
+            </div>
+
+            <p className="eyebrow">
+              JOURNEY COMPLETE
+            </p>
+
+            <h2>
+              We did it.
+              <br />
+              <span>What a day.</span>
+            </h2>
+
+            <p>
+              Marina sunrise → good food → underwater
+              adventures → ECR → beaches → sunset →
+              ramen.
+            </p>
+
+            <div className="bigHeart">
+              ♥
+            </div>
+
+            <strong>
+              Chennai, 2026
+            </strong>
+
+          </div>
+
+        </section>
+
+      )}
 
 
       {/* =========================
@@ -509,65 +776,32 @@ export default function Page() {
         <div className="foodCards">
 
           <div className="foodCard">
-
-            <span>
-              🍽️
-            </span>
-
+            <span>🍽️</span>
             <small>
               BREAKFAST · 7:30–8:00 AM
             </small>
-
-            <h3>
-              Ratna Cafe
-            </h3>
-
-            <p>
-              Triplicane
-            </p>
-
+            <h3>Ratna Cafe</h3>
+            <p>Triplicane</p>
           </div>
 
 
           <div className="foodCard">
-
-            <span>
-              🍛
-            </span>
-
+            <span>🍛</span>
             <small>
               LUNCH · 1:00 PM
             </small>
-
-            <h3>
-              Zaitoon
-            </h3>
-
-            <p>
-              ECR
-            </p>
-
+            <h3>Zaitoon</h3>
+            <p>ECR</p>
           </div>
 
 
           <div className="foodCard">
-
-            <span>
-              🍜
-            </span>
-
+            <span>🍜</span>
             <small>
               EVENING · DINNER
             </small>
-
-            <h3>
-              TAMEN
-            </h3>
-
-            <p>
-              The Local Ramen
-            </p>
-
+            <h3>TAMEN</h3>
+            <p>The Local Ramen</p>
           </div>
 
         </div>
@@ -650,132 +884,7 @@ export default function Page() {
           — With love
         </p>
 
-
-        {/* =========================
-            DONE BUTTON
-        ========================== */}
-
-        <button
-          type="button"
-          className="doneButton"
-          onClick={() => setShowCrackers(true)}
-        >
-          DONE 🎉
-        </button>
-
       </section>
-
-
-      {/* =========================
-          FIREWORKS / CRACKERS
-      ========================== */}
-
-      {showCrackers && (
-
-        <div className="crackerOverlay">
-
-          {/* FIREWORK 1 */}
-
-          <div className="firework fireworkOne">
-
-            <span>✦</span>
-            <span>✦</span>
-            <span>✦</span>
-            <span>✦</span>
-            <span>✦</span>
-            <span>✦</span>
-            <span>✦</span>
-            <span>✦</span>
-
-          </div>
-
-
-          {/* FIREWORK 2 */}
-
-          <div className="firework fireworkTwo">
-
-            <span>✦</span>
-            <span>✦</span>
-            <span>✦</span>
-            <span>✦</span>
-            <span>✦</span>
-            <span>✦</span>
-            <span>✦</span>
-            <span>✦</span>
-
-          </div>
-
-
-          {/* FIREWORK 3 */}
-
-          <div className="firework fireworkThree">
-
-            <span>✦</span>
-            <span>✦</span>
-            <span>✦</span>
-            <span>✦</span>
-            <span>✦</span>
-            <span>✦</span>
-            <span>✦</span>
-            <span>✦</span>
-
-          </div>
-
-
-          {/* FIREWORK 4 */}
-
-          <div className="firework fireworkFour">
-
-            <span>✦</span>
-            <span>✦</span>
-            <span>✦</span>
-            <span>✦</span>
-            <span>✦</span>
-            <span>✦</span>
-            <span>✦</span>
-            <span>✦</span>
-
-          </div>
-
-
-          {/* CENTER MESSAGE */}
-
-          <div className="crackerMessage">
-
-            <div className="celebrationEmoji">
-              🎉
-            </div>
-
-            <div className="celebrationEmoji secondEmoji">
-              🎆
-            </div>
-
-            <h2>
-              DAY COMPLETE!
-            </h2>
-
-            <p>
-              Chennai memories unlocked ❤️
-            </p>
-
-            <div className="celebrationLine">
-              ✨ ✨ ✨
-            </div>
-
-            <button
-              type="button"
-              onClick={() =>
-                setShowCrackers(false)
-              }
-            >
-              CONTINUE
-            </button>
-
-          </div>
-
-        </div>
-
-      )}
 
 
       {/* =========================
@@ -783,7 +892,6 @@ export default function Page() {
       ========================== */}
 
       <footer>
-
         <div>
           CHENNAI · 2026
         </div>
@@ -791,7 +899,6 @@ export default function Page() {
         <div>
           MADE FOR DISHA ♥
         </div>
-
       </footer>
 
 
@@ -819,7 +926,6 @@ export default function Page() {
           color: #191817;
           min-height: 100vh;
           overflow: hidden;
-
           font-family:
             Arial,
             Helvetica,
@@ -827,13 +933,10 @@ export default function Page() {
         }
 
 
-        /* =========================
-           HERO
-        ========================== */
+        /* HERO */
 
         .hero {
           min-height: 100vh;
-
           position: relative;
 
           display: flex;
@@ -854,10 +957,8 @@ export default function Page() {
           background-position: center;
         }
 
-
         .heroOverlay {
           position: absolute;
-
           inset: 0;
 
           background:
@@ -871,9 +972,7 @@ export default function Page() {
         }
 
 
-        /* =========================
-           NAV
-        ========================== */
+        /* NAV */
 
         .nav {
           position: relative;
@@ -882,48 +981,33 @@ export default function Page() {
           padding: 28px 5vw;
 
           display: flex;
-
           justify-content: space-between;
           align-items: center;
 
           gap: 20px;
         }
 
-
         .logo {
           font-size: 14px;
-
           font-weight: 800;
-
           letter-spacing: 3px;
-
           white-space: nowrap;
         }
 
-
         .logo span {
           color: #f6b45c;
-
           padding: 0 5px;
         }
 
-
         .topActions {
           display: flex;
-
           align-items: center;
-
           gap: 10px;
         }
 
-
         .contactButton {
           display: inline-flex;
-
           align-items: center;
-
-          justify-content: center;
-
           gap: 7px;
 
           text-decoration: none;
@@ -933,7 +1017,6 @@ export default function Page() {
           border-radius: 30px;
 
           font-size: 12px;
-
           font-weight: 700;
 
           transition: 0.3s;
@@ -941,41 +1024,30 @@ export default function Page() {
           white-space: nowrap;
         }
 
-
         .callButton {
           background: rgba(255,255,255,0.14);
-
           border: 1px solid rgba(255,255,255,0.35);
-
           color: white;
         }
-
 
         .whatsappButton {
           background: #25d366;
-
           border: 1px solid #25d366;
-
           color: white;
         }
-
 
         .contactButton:hover {
           transform: translateY(-2px);
         }
 
-
         .callButton:hover {
           background: white;
-
           color: #191817;
         }
-
 
         .whatsappButton:hover {
           background: #20bd5a;
         }
-
 
         .navButton {
           border: 1px solid rgba(255,255,255,0.4);
@@ -995,21 +1067,16 @@ export default function Page() {
           white-space: nowrap;
         }
 
-
         .navButton:hover {
           background: white;
-
           color: black;
         }
 
 
-        /* =========================
-           HERO CONTENT
-        ========================== */
+        /* HERO CONTENT */
 
         .heroContent {
           position: relative;
-
           z-index: 2;
 
           padding: 8vh 9vw;
@@ -1017,19 +1084,15 @@ export default function Page() {
           max-width: 900px;
         }
 
-
         .eyebrow {
           font-size: 11px;
-
           letter-spacing: 4px;
-
           font-weight: 700;
 
           margin: 0 0 20px;
 
           opacity: 0.75;
         }
-
 
         .hero h1 {
           font-size: clamp(65px, 11vw, 150px);
@@ -1043,22 +1106,18 @@ export default function Page() {
           font-weight: 800;
         }
 
-
         .hero h1 span {
           color: #f7b55d;
         }
 
-
         .heroLine {
           width: 90px;
-
           height: 2px;
 
           background: #f7b55d;
 
           margin: 35px 0 18px;
         }
-
 
         .dedication {
           font-family: Georgia, serif;
@@ -1068,11 +1127,9 @@ export default function Page() {
           margin: 0 0 10px;
         }
 
-
         .dedication span {
           color: #f7b55d;
         }
-
 
         .heroText {
           font-size: 15px;
@@ -1081,7 +1138,6 @@ export default function Page() {
 
           opacity: 0.8;
         }
-
 
         .startButton {
           margin-top: 25px;
@@ -1111,20 +1167,16 @@ export default function Page() {
           transition: 0.3s;
         }
 
-
         .startButton:hover {
           transform: translateY(-3px);
         }
-
 
         .startButton strong {
           font-size: 18px;
         }
 
-
         .heroBottom {
           position: relative;
-
           z-index: 2;
 
           padding: 25px 5vw;
@@ -1141,9 +1193,7 @@ export default function Page() {
         }
 
 
-        /* =========================
-           INTRO
-        ========================== */
+        /* INTRO */
 
         .intro {
           padding: 130px 10vw;
@@ -1157,7 +1207,6 @@ export default function Page() {
           background: #f5f1e9;
         }
 
-
         .introSmall {
           font-size: 10px;
 
@@ -1166,11 +1215,9 @@ export default function Page() {
           font-weight: 800;
         }
 
-
         .introText {
           max-width: 800px;
         }
-
 
         .intro h2 {
           font-family: Georgia, serif;
@@ -1186,11 +1233,9 @@ export default function Page() {
           margin: 0 0 30px;
         }
 
-
         .intro h2 em {
           color: #a56734;
         }
-
 
         .intro p {
           max-width: 550px;
@@ -1203,16 +1248,13 @@ export default function Page() {
         }
 
 
-        /* =========================
-           ITINERARY
-        ========================== */
+        /* ITINERARY */
 
         .itinerary {
           background: #ebe5da;
 
           padding: 120px 8vw;
         }
-
 
         .sectionHeading {
           display: flex;
@@ -1221,16 +1263,14 @@ export default function Page() {
 
           align-items: end;
 
-          margin-bottom: 90px;
+          margin-bottom: 50px;
         }
-
 
         .eyebrow.dark {
           color: #8b623b;
 
           opacity: 1;
         }
-
 
         .sectionHeading h2 {
           font-family: Georgia, serif;
@@ -1246,7 +1286,6 @@ export default function Page() {
           letter-spacing: -3px;
         }
 
-
         .sectionDescription {
           max-width: 280px;
 
@@ -1258,6 +1297,61 @@ export default function Page() {
         }
 
 
+        /* PROGRESS */
+
+        .progressBox {
+          max-width: 1000px;
+          margin: 0 auto 60px;
+
+          background: rgba(248,245,239,0.7);
+
+          padding: 20px 25px;
+
+          border: 1px solid #d8cdbd;
+        }
+
+        .progressText {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+
+          font-size: 10px;
+
+          letter-spacing: 2px;
+
+          font-weight: 800;
+
+          margin-bottom: 12px;
+        }
+
+        .progressText strong {
+          color: #a56734;
+          font-size: 13px;
+        }
+
+        .progressTrack {
+          height: 7px;
+
+          background: #ddd4c8;
+
+          border-radius: 20px;
+
+          overflow: hidden;
+        }
+
+        .progressFill {
+          height: 100%;
+
+          background: #a56734;
+
+          border-radius: 20px;
+
+          transition: width 0.5s ease;
+        }
+
+
+        /* TIMELINE */
+
         .timeline {
           max-width: 1000px;
 
@@ -1265,7 +1359,6 @@ export default function Page() {
 
           position: relative;
         }
-
 
         .timelineLine {
           position: absolute;
@@ -1280,7 +1373,6 @@ export default function Page() {
 
           background: #cfc6b8;
         }
-
 
         .timelineItem {
           position: relative;
@@ -1298,7 +1390,6 @@ export default function Page() {
 
           align-items: start;
         }
-
 
         .timelineDot {
           position: relative;
@@ -1326,8 +1417,21 @@ export default function Page() {
           font-size: 11px;
 
           font-weight: 700;
+
+          transition: 0.3s;
         }
 
+        .completedDot {
+          background: #10b981;
+
+          border-color: #10b981;
+
+          color: white;
+
+          box-shadow:
+            0 0 0 7px rgba(16,185,129,0.12),
+            0 8px 20px rgba(16,185,129,0.3);
+        }
 
         .time {
           grid-column: 1;
@@ -1343,7 +1447,6 @@ export default function Page() {
           padding-top: 12px;
         }
 
-
         .time small {
           display: block;
 
@@ -1356,7 +1459,6 @@ export default function Page() {
           margin-top: 5px;
         }
 
-
         .placeCard {
           grid-column: 3;
 
@@ -1368,11 +1470,11 @@ export default function Page() {
 
           transition:
             transform 0.3s,
-            box-shadow 0.3s;
+            box-shadow 0.3s,
+            border-color 0.3s;
 
-          border: 1px solid transparent;
+          border: 2px solid transparent;
         }
-
 
         .placeCard:hover,
         .placeCard.activeCard {
@@ -1385,6 +1487,30 @@ export default function Page() {
           border-color: #d8c6ac;
         }
 
+        /* COMPLETED CARD */
+
+        .placeCard.completedCard {
+          border-color: #10b981;
+
+          background:
+            linear-gradient(
+              135deg,
+              #f8f5ef,
+              #effaf5
+            );
+
+          box-shadow:
+            0 12px 35px
+            rgba(16,185,129,0.12);
+        }
+
+        .placeCard.completedCard h3 {
+          color: #087f5b;
+        }
+
+        .completedItem .subtitle {
+          color: #079669;
+        }
 
         .cardTop {
           display: flex;
@@ -1394,11 +1520,9 @@ export default function Page() {
           align-items: center;
         }
 
-
         .placeEmoji {
           font-size: 30px;
         }
-
 
         .cardArrow {
           width: 30px;
@@ -1420,7 +1544,6 @@ export default function Page() {
           font-size: 18px;
         }
 
-
         .placeCard h3 {
           font-family: Georgia, serif;
 
@@ -1432,7 +1555,6 @@ export default function Page() {
 
           letter-spacing: -1px;
         }
-
 
         .subtitle {
           color: #a06f3c;
@@ -1448,7 +1570,6 @@ export default function Page() {
           margin: 0;
         }
 
-
         .cardDetails {
           max-height: 0;
 
@@ -1457,11 +1578,9 @@ export default function Page() {
           transition: max-height 0.4s ease;
         }
 
-
         .active .cardDetails {
-          max-height: 1200px;
+          max-height: 1500px;
         }
-
 
         .cardDetails > p {
           color: #686159;
@@ -1472,7 +1591,6 @@ export default function Page() {
 
           margin-top: 25px;
         }
-
 
         .address {
           display: flex;
@@ -1487,7 +1605,6 @@ export default function Page() {
 
           margin-top: 15px;
         }
-
 
         .mapButton {
           display: inline-block;
@@ -1511,15 +1628,71 @@ export default function Page() {
           transition: 0.3s;
         }
 
-
         .mapButton:hover {
           background: #a56734;
         }
 
 
-        /* =========================
-           VGP TICKET
-        ========================== */
+        /* CHECK-IN BUTTON */
+
+        .checkInButton {
+          display: block;
+
+          width: 100%;
+
+          margin-top: 20px;
+
+          padding: 14px 18px;
+
+          border: 1px solid #bfb4a5;
+
+          background: #f5f1e9;
+
+          color: #302d29;
+
+          font-size: 11px;
+
+          font-weight: 800;
+
+          letter-spacing: 1px;
+
+          text-transform: uppercase;
+
+          cursor: pointer;
+
+          transition: 0.3s;
+        }
+
+        .checkInButton:hover {
+          background: #1d1b19;
+
+          color: white;
+
+          border-color: #1d1b19;
+
+          transform: translateY(-2px);
+        }
+
+        .checkInButton.checked {
+          background: #10b981;
+
+          color: white;
+
+          border-color: #10b981;
+
+          box-shadow:
+            0 8px 20px
+            rgba(16,185,129,0.2);
+        }
+
+        .checkInButton.checked:hover {
+          background: #059669;
+
+          border-color: #059669;
+        }
+
+
+        /* VGP TICKET */
 
         .ticketArea {
           margin-top: 25px;
@@ -1528,7 +1701,6 @@ export default function Page() {
 
           border-top: 1px solid #ddd3c5;
         }
-
 
         .ticketButton {
           border: none;
@@ -1552,13 +1724,11 @@ export default function Page() {
           transition: 0.3s;
         }
 
-
         .ticketButton:hover {
           background: #7d4d27;
 
           transform: translateY(-2px);
         }
-
 
         .ticketBox {
           margin-top: 20px;
@@ -1569,7 +1739,6 @@ export default function Page() {
 
           border: 1px solid #d7cbbb;
         }
-
 
         .ticketTitle {
           font-size: 10px;
@@ -1582,7 +1751,6 @@ export default function Page() {
 
           margin: 0 0 15px;
         }
-
 
         .ticketImage {
           display: block;
@@ -1601,7 +1769,6 @@ export default function Page() {
             0 10px 25px
             rgba(0,0,0,0.12);
         }
-
 
         .ticketOpen {
           display: inline-block;
@@ -1624,9 +1791,214 @@ export default function Page() {
         }
 
 
-        /* =========================
-           SUNSET
-        ========================== */
+        /* FINAL COMPLETE BUTTON */
+
+        .completeJourney {
+          max-width: 1000px;
+
+          margin: 70px auto 0;
+
+          text-align: center;
+
+          padding: 50px 20px;
+
+          border-top: 1px solid #d2c8bb;
+        }
+
+        .completeHint {
+          color: #777067;
+
+          font-size: 13px;
+
+          margin-bottom: 20px;
+        }
+
+        .finishButton {
+          border: none;
+
+          padding: 18px 30px;
+
+          background: #bdb5aa;
+
+          color: white;
+
+          font-size: 12px;
+
+          font-weight: 800;
+
+          letter-spacing: 1.5px;
+
+          text-transform: uppercase;
+
+          cursor: not-allowed;
+
+          transition: 0.3s;
+        }
+
+        .finishButton.ready {
+          background: #1d1b19;
+
+          cursor: pointer;
+
+          box-shadow:
+            0 15px 35px
+            rgba(0,0,0,0.15);
+        }
+
+        .finishButton.ready:hover {
+          background: #a56734;
+
+          transform: translateY(-4px);
+
+          box-shadow:
+            0 20px 40px
+            rgba(165,103,52,0.25);
+        }
+
+
+        /* CELEBRATION */
+
+        .celebration {
+          position: relative;
+
+          min-height: 650px;
+
+          display: flex;
+
+          justify-content: center;
+
+          align-items: center;
+
+          text-align: center;
+
+          overflow: hidden;
+
+          background:
+            radial-gradient(
+              circle at center,
+              #4c3322,
+              #171310 65%
+            );
+
+          color: white;
+
+          padding: 100px 20px;
+        }
+
+        .celebrationGlow {
+          position: absolute;
+
+          width: 600px;
+          height: 600px;
+
+          border-radius: 50%;
+
+          background:
+            radial-gradient(
+              circle,
+              rgba(247,181,93,0.25),
+              transparent 65%
+            );
+
+          animation: celebrationPulse 2s infinite;
+        }
+
+        @keyframes celebrationPulse {
+          0%,
+          100% {
+            transform: scale(1);
+            opacity: 0.6;
+          }
+
+          50% {
+            transform: scale(1.15);
+            opacity: 1;
+          }
+        }
+
+        .celebrationContent {
+          position: relative;
+
+          z-index: 2;
+
+          max-width: 800px;
+        }
+
+        .celebrationEmoji {
+          font-size: 42px;
+
+          margin-bottom: 25px;
+
+          letter-spacing: 10px;
+        }
+
+        .celebration h2 {
+          font-family: Georgia, serif;
+
+          font-weight: 400;
+
+          font-size: clamp(65px, 10vw, 130px);
+
+          line-height: 0.82;
+
+          letter-spacing: -6px;
+
+          margin: 10px 0 35px;
+        }
+
+        .celebration h2 span {
+          color: #f0ae5a;
+        }
+
+        .celebrationContent > p:not(.eyebrow) {
+          max-width: 650px;
+
+          margin: auto;
+
+          color: #d1c8bf;
+
+          line-height: 1.8;
+
+          font-size: 15px;
+        }
+
+        .bigHeart {
+          color: #f0ae5a;
+
+          font-size: 60px;
+
+          margin: 30px 0;
+
+          animation: heartBeat 1.3s infinite;
+        }
+
+        @keyframes heartBeat {
+
+          0%,
+          100% {
+            transform: scale(1);
+          }
+
+          20% {
+            transform: scale(1.2);
+          }
+
+          40% {
+            transform: scale(1);
+          }
+
+        }
+
+        .celebrationContent strong {
+          color: #f0ae5a;
+
+          font-family: Georgia, serif;
+
+          font-size: 18px;
+        }
+
+
+        /* SUNSET */
 
         .visualSection {
           min-height: 750px;
@@ -1639,7 +2011,6 @@ export default function Page() {
 
           color: white;
         }
-
 
         .visualImage {
           min-height: 600px;
@@ -1656,7 +2027,6 @@ export default function Page() {
           background-position: center;
         }
 
-
         .visualContent {
           display: flex;
 
@@ -1666,7 +2036,6 @@ export default function Page() {
 
           padding: 10vw;
         }
-
 
         .visualContent h2 {
           font-family: Georgia, serif;
@@ -1682,11 +2051,9 @@ export default function Page() {
           margin: 0 0 35px;
         }
 
-
         .visualContent h2 span {
           color: #f1ae59;
         }
-
 
         .visualContent > p {
           max-width: 400px;
@@ -1698,7 +2065,6 @@ export default function Page() {
           font-size: 14px;
         }
 
-
         .sunsetTime {
           margin-top: 35px;
 
@@ -1706,7 +2072,6 @@ export default function Page() {
 
           border-top: 1px solid #47433e;
         }
-
 
         .sunsetTime strong {
           display: block;
@@ -1717,7 +2082,6 @@ export default function Page() {
 
           font-family: Georgia, serif;
         }
-
 
         .sunsetTime span {
           display: block;
@@ -1732,9 +2096,7 @@ export default function Page() {
         }
 
 
-        /* =========================
-           FOOD
-        ========================== */
+        /* FOOD */
 
         .foodSection {
           padding: 130px 8vw;
@@ -1742,13 +2104,11 @@ export default function Page() {
           background: #f5f1e9;
         }
 
-
         .foodIntro {
           max-width: 650px;
 
           margin-bottom: 70px;
         }
-
 
         .foodIntro h2 {
           font-family: Georgia, serif;
@@ -1764,13 +2124,11 @@ export default function Page() {
           margin: 0 0 30px;
         }
 
-
         .foodIntro > p {
           color: #6f685f;
 
           line-height: 1.8;
         }
-
 
         .foodCards {
           display: grid;
@@ -1780,7 +2138,6 @@ export default function Page() {
 
           gap: 20px;
         }
-
 
         .foodCard {
           background: #ebe5da;
@@ -1792,16 +2149,13 @@ export default function Page() {
           transition: 0.3s;
         }
 
-
         .foodCard:hover {
           transform: translateY(-6px);
         }
 
-
         .foodCard > span {
           font-size: 40px;
         }
-
 
         .foodCard small {
           display: block;
@@ -1817,7 +2171,6 @@ export default function Page() {
           margin-top: 35px;
         }
 
-
         .foodCard h3 {
           font-family: Georgia, serif;
 
@@ -1828,7 +2181,6 @@ export default function Page() {
           margin: 8px 0;
         }
 
-
         .foodCard p {
           margin: 0;
 
@@ -1838,9 +2190,7 @@ export default function Page() {
         }
 
 
-        /* =========================
-           SUMMARY
-        ========================== */
+        /* SUMMARY */
 
         .summary {
           background: #d7b183;
@@ -1850,13 +2200,11 @@ export default function Page() {
           text-align: center;
         }
 
-
         .summaryInner {
           max-width: 900px;
 
           margin: auto;
         }
-
 
         .summary h2 {
           font-family: Georgia, serif;
@@ -1870,11 +2218,9 @@ export default function Page() {
           margin: 0;
         }
 
-
         .summary h2 span {
           color: #704b2e;
         }
-
 
         .summaryText {
           max-width: 700px;
@@ -1887,7 +2233,6 @@ export default function Page() {
 
           color: #634b37;
         }
-
 
         .summaryButton {
           display: inline-block;
@@ -1909,15 +2254,12 @@ export default function Page() {
           transition: 0.3s;
         }
 
-
         .summaryButton:hover {
           transform: translateY(-3px);
         }
 
 
-        /* =========================
-           FINAL
-        ========================== */
+        /* FINAL */
 
         .final {
           position: relative;
@@ -1943,7 +2285,6 @@ export default function Page() {
           overflow: hidden;
         }
 
-
         .finalGlow {
           position: absolute;
 
@@ -1961,13 +2302,11 @@ export default function Page() {
             );
         }
 
-
         .final > *:not(.finalGlow) {
           position: relative;
 
           z-index: 1;
         }
-
 
         .final h2 {
           font-family: Georgia, serif;
@@ -1983,11 +2322,9 @@ export default function Page() {
           margin: 10px 0 35px;
         }
 
-
         .final h2 span {
           color: #f0ae5a;
         }
-
 
         .heart {
           color: #f0ae5a;
@@ -1998,7 +2335,6 @@ export default function Page() {
 
           animation: heartbeat 1.6s infinite;
         }
-
 
         @keyframes heartbeat {
 
@@ -2017,7 +2353,6 @@ export default function Page() {
 
         }
 
-
         .finalMessage {
           font-family: Georgia, serif;
 
@@ -2027,7 +2362,6 @@ export default function Page() {
 
           color: #c8c1b9;
         }
-
 
         .signature {
           margin-top: 25px;
@@ -2040,424 +2374,7 @@ export default function Page() {
         }
 
 
-        /* =========================
-           DONE BUTTON
-        ========================== */
-
-        .doneButton {
-          margin-top: 35px;
-
-          padding: 17px 45px;
-
-          border: 1px solid #f0ae5a;
-
-          background: #f0ae5a;
-
-          color: #1b1917;
-
-          font-size: 12px;
-
-          font-weight: 900;
-
-          letter-spacing: 3px;
-
-          cursor: pointer;
-
-          text-transform: uppercase;
-
-          transition:
-            transform 0.3s,
-            box-shadow 0.3s;
-        }
-
-
-        .doneButton:hover {
-          transform: scale(1.08);
-
-          box-shadow:
-            0 0 30px rgba(240, 174, 90, 0.6);
-        }
-
-
-        .doneButton:active {
-          transform: scale(0.96);
-        }
-
-
-        /* =========================
-           CRACKER OVERLAY
-        ========================== */
-
-        .crackerOverlay {
-          position: fixed;
-
-          inset: 0;
-
-          z-index: 99999;
-
-          background:
-            radial-gradient(
-              circle at center,
-              #302116 0%,
-              #120f0c 45%,
-              #050505 100%
-            );
-
-          display: flex;
-
-          justify-content: center;
-
-          align-items: center;
-
-          overflow: hidden;
-
-          animation: overlayAppear 0.5s ease-out;
-        }
-
-
-        @keyframes overlayAppear {
-
-          from {
-            opacity: 0;
-          }
-
-          to {
-            opacity: 1;
-          }
-
-        }
-
-
-        /* =========================
-           FIREWORKS
-        ========================== */
-
-        .firework {
-          position: absolute;
-
-          width: 10px;
-
-          height: 10px;
-
-          border-radius: 50%;
-
-          animation:
-            fireworkAppear 2.2s ease-out infinite;
-        }
-
-
-        .firework span {
-          position: absolute;
-
-          left: 0;
-
-          top: 0;
-
-          font-size: 35px;
-
-          color: #f7b55d;
-
-          text-shadow:
-            0 0 8px #fff,
-            0 0 20px #f7b55d,
-            0 0 40px #f7b55d;
-
-          transform-origin: 5px 5px;
-        }
-
-
-        .firework span:nth-child(1) {
-          transform: translate(-5px, -85px);
-        }
-
-
-        .firework span:nth-child(2) {
-          transform: translate(55px, -55px);
-        }
-
-
-        .firework span:nth-child(3) {
-          transform: translate(85px, -5px);
-        }
-
-
-        .firework span:nth-child(4) {
-          transform: translate(55px, 50px);
-        }
-
-
-        .firework span:nth-child(5) {
-          transform: translate(-5px, 80px);
-        }
-
-
-        .firework span:nth-child(6) {
-          transform: translate(-60px, 50px);
-        }
-
-
-        .firework span:nth-child(7) {
-          transform: translate(-90px, -5px);
-        }
-
-
-        .firework span:nth-child(8) {
-          transform: translate(-60px, -55px);
-        }
-
-
-        .fireworkOne {
-          top: 17%;
-
-          left: 14%;
-
-          animation-delay: 0s;
-        }
-
-
-        .fireworkTwo {
-          top: 20%;
-
-          right: 14%;
-
-          animation-delay: 0.6s;
-
-          transform: scale(0.8);
-        }
-
-
-        .fireworkThree {
-          bottom: 15%;
-
-          left: 20%;
-
-          animation-delay: 1s;
-
-          transform: scale(0.7);
-        }
-
-
-        .fireworkFour {
-          bottom: 17%;
-
-          right: 20%;
-
-          animation-delay: 1.4s;
-
-          transform: scale(0.9);
-        }
-
-
-        @keyframes fireworkAppear {
-
-          0% {
-            opacity: 0;
-
-            transform:
-              scale(0.1)
-              rotate(0deg);
-          }
-
-          15% {
-            opacity: 1;
-          }
-
-          45% {
-            opacity: 1;
-
-            transform:
-              scale(1)
-              rotate(20deg);
-          }
-
-          70% {
-            opacity: 0.7;
-          }
-
-          100% {
-            opacity: 0;
-
-            transform:
-              scale(0.7)
-              rotate(45deg);
-          }
-
-        }
-
-
-        /* =========================
-           CELEBRATION MESSAGE
-        ========================== */
-
-        .crackerMessage {
-          position: relative;
-
-          z-index: 10;
-
-          text-align: center;
-
-          animation:
-            celebrationPop
-            0.8s
-            cubic-bezier(0.2, 1.5, 0.5, 1);
-        }
-
-
-        @keyframes celebrationPop {
-
-          0% {
-            opacity: 0;
-
-            transform:
-              scale(0.3)
-              translateY(40px);
-          }
-
-          70% {
-            transform:
-              scale(1.08)
-              translateY(-5px);
-          }
-
-          100% {
-            opacity: 1;
-
-            transform:
-              scale(1)
-              translateY(0);
-          }
-
-        }
-
-
-        .celebrationEmoji {
-          font-size: 80px;
-
-          margin-bottom: 10px;
-
-          animation:
-            celebrationBounce
-            1.4s
-            infinite;
-        }
-
-
-        .secondEmoji {
-          display: none;
-        }
-
-
-        @keyframes celebrationBounce {
-
-          0%,
-          100% {
-            transform: translateY(0) rotate(0);
-          }
-
-          50% {
-            transform:
-              translateY(-12px)
-              rotate(5deg);
-          }
-
-        }
-
-
-        .crackerMessage h2 {
-          font-family: Georgia, serif;
-
-          color: #f0ae5a;
-
-          font-size:
-            clamp(45px, 8vw, 100px);
-
-          line-height: 0.9;
-
-          letter-spacing: -5px;
-
-          margin: 0;
-        }
-
-
-        .crackerMessage p {
-          color: #d8d0c7;
-
-          font-family: Georgia, serif;
-
-          font-size: 20px;
-
-          margin: 25px 0 15px;
-        }
-
-
-        .celebrationLine {
-          color: #f7b55d;
-
-          font-size: 20px;
-
-          letter-spacing: 10px;
-
-          margin: 15px 0 30px;
-
-          animation:
-            sparkle
-            1s
-            infinite alternate;
-        }
-
-
-        @keyframes sparkle {
-
-          from {
-            opacity: 0.4;
-
-            transform: scale(0.95);
-          }
-
-          to {
-            opacity: 1;
-
-            transform: scale(1.05);
-          }
-
-        }
-
-
-        .crackerMessage button {
-          padding: 14px 30px;
-
-          background: transparent;
-
-          border: 1px solid #f0ae5a;
-
-          color: #f0ae5a;
-
-          cursor: pointer;
-
-          text-transform: uppercase;
-
-          letter-spacing: 2px;
-
-          font-size: 10px;
-
-          font-weight: 800;
-
-          transition: 0.3s;
-        }
-
-
-        .crackerMessage button:hover {
-          background: #f0ae5a;
-
-          color: #1b1917;
-
-          transform: translateY(-3px);
-        }
-
-
-        /* =========================
-           FOOTER
-        ========================== */
+        /* FOOTER */
 
         footer {
           background: #11100f;
@@ -2476,9 +2393,7 @@ export default function Page() {
         }
 
 
-        /* =========================
-           TABLET
-        ========================== */
+        /* TABLET */
 
         @media (max-width: 900px) {
 
@@ -2486,21 +2401,17 @@ export default function Page() {
             gap: 6px;
           }
 
-
           .contactButton {
             padding: 10px 12px;
           }
-
 
           .navButton {
             padding: 10px 13px;
           }
 
-
           .intro {
             grid-template-columns: 1fr;
           }
-
 
           .foodCards {
             grid-template-columns: 1fr;
@@ -2509,9 +2420,7 @@ export default function Page() {
         }
 
 
-        /* =========================
-           MOBILE
-        ========================== */
+        /* MOBILE */
 
         @media (max-width: 800px) {
 
@@ -2521,27 +2430,22 @@ export default function Page() {
             align-items: flex-start;
           }
 
-
           .topActions {
             flex-wrap: wrap;
 
             justify-content: flex-end;
           }
 
-
           .navButton {
             display: none;
           }
-
 
           .contactButton span {
             display: none;
           }
 
-
           .contactButton {
             width: 40px;
-
             height: 40px;
 
             padding: 0;
@@ -2553,11 +2457,9 @@ export default function Page() {
             font-size: 17px;
           }
 
-
           .heroContent {
             padding: 5vh 7vw;
           }
-
 
           .hero h1 {
             font-size: 70px;
@@ -2565,11 +2467,9 @@ export default function Page() {
             letter-spacing: -4px;
           }
 
-
           .heroBottom {
             display: none;
           }
-
 
           .intro {
             grid-template-columns: 1fr;
@@ -2577,28 +2477,23 @@ export default function Page() {
             padding: 90px 7vw;
           }
 
-
           .itinerary {
             padding: 90px 5vw;
           }
 
-
           .sectionHeading {
             display: block;
 
-            margin-bottom: 60px;
+            margin-bottom: 40px;
           }
-
 
           .sectionDescription {
             margin-top: 25px;
           }
 
-
           .timelineLine {
             left: 20px;
           }
-
 
           .timelineItem {
             grid-template-columns:
@@ -2607,7 +2502,6 @@ export default function Page() {
 
             gap: 15px;
           }
-
 
           .timelineDot {
             grid-column: 1;
@@ -2619,7 +2513,6 @@ export default function Page() {
             height: 40px;
           }
 
-
           .time {
             grid-column: 2;
 
@@ -2628,6 +2521,8 @@ export default function Page() {
             text-align: left;
 
             padding-top: 0;
+
+            margin-left: 0;
 
             min-height: 40px;
 
@@ -2638,7 +2533,6 @@ export default function Page() {
             justify-content: center;
           }
 
-
           .placeCard {
             grid-column: 2;
 
@@ -2647,106 +2541,49 @@ export default function Page() {
             padding: 25px;
           }
 
-
           .placeCard h3 {
             font-size: 30px;
           }
-
 
           .visualSection {
             grid-template-columns: 1fr;
           }
 
-
           .visualImage {
             min-height: 400px;
           }
-
 
           .visualContent {
             padding: 80px 8vw;
           }
 
-
           .foodSection {
             padding: 90px 7vw;
           }
-
 
           .foodCards {
             grid-template-columns: 1fr;
           }
 
-
           .foodCard {
             min-height: 220px;
           }
-
 
           .summary {
             padding: 90px 7vw;
           }
 
-
           .summary h2 {
             letter-spacing: -3px;
           }
-
 
           .final {
             min-height: 650px;
           }
 
-
           .final h2 {
             letter-spacing: -4px;
           }
-
-
-          .crackerMessage {
-            width: 90%;
-          }
-
-
-          .crackerMessage h2 {
-            font-size: 52px;
-
-            letter-spacing: -3px;
-          }
-
-
-          .crackerMessage p {
-            font-size: 17px;
-          }
-
-
-          .fireworkOne {
-            left: 8%;
-
-            top: 15%;
-          }
-
-
-          .fireworkTwo {
-            right: 8%;
-
-            top: 15%;
-          }
-
-
-          .fireworkThree {
-            left: 8%;
-
-            bottom: 15%;
-          }
-
-
-          .fireworkFour {
-            right: 8%;
-
-            bottom: 15%;
-          }
-
 
           footer {
             flex-direction: column;
@@ -2759,130 +2596,61 @@ export default function Page() {
         }
 
 
-        /* =========================
-           SMALL MOBILE
-        ========================== */
+        /* SMALL MOBILE */
 
         @media (max-width: 450px) {
 
           .logo {
             font-size: 11px;
-
             letter-spacing: 2px;
           }
-
 
           .nav {
             padding: 18px 4vw;
           }
 
-
           .hero h1 {
             font-size: 62px;
           }
-
 
           .dedication {
             font-size: 25px;
           }
 
-
           .heroText {
             font-size: 14px;
           }
-
 
           .placeCard h3 {
             font-size: 26px;
           }
 
-
           .ticketButton {
             width: 100%;
           }
-
 
           .ticketBox {
             padding: 10px;
           }
 
-
           .ticketTitle {
             font-size: 9px;
           }
-
 
           .finalMessage {
             font-size: 16px;
           }
 
-
-          .doneButton {
-            width: 80%;
-
-            max-width: 280px;
+          .finishButton {
+            width: 100%;
           }
 
-
-          .crackerMessage h2 {
-            font-size: 43px;
-
-            letter-spacing: -2px;
-          }
-
-
-          .celebrationEmoji {
+          .celebration h2 {
             font-size: 65px;
           }
 
-
-          .crackerMessage p {
-            font-size: 15px;
-          }
-
-
-          .firework span {
-            font-size: 25px;
-          }
-
-
-          .firework span:nth-child(1) {
-            transform: translate(-5px, -60px);
-          }
-
-
-          .firework span:nth-child(2) {
-            transform: translate(40px, -40px);
-          }
-
-
-          .firework span:nth-child(3) {
-            transform: translate(60px, -5px);
-          }
-
-
-          .firework span:nth-child(4) {
-            transform: translate(40px, 35px);
-          }
-
-
-          .firework span:nth-child(5) {
-            transform: translate(-5px, 55px);
-          }
-
-
-          .firework span:nth-child(6) {
-            transform: translate(-45px, 35px);
-          }
-
-
-          .firework span:nth-child(7) {
-            transform: translate(-60px, -5px);
-          }
-
-
-          .firework span:nth-child(8) {
-            transform: translate(-45px, -40px);
+          .celebrationEmoji {
+            font-size: 30px;
           }
 
         }
