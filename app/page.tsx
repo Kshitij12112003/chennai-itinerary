@@ -1,10 +1,35 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 const PHONE = "+918382858019";
 
-const places = [
+type Place = {
+  time: string;
+  period: string;
+  title: string;
+  subtitle: string;
+  emoji: string;
+  description: string;
+  address: string;
+  map: string;
+  type: string;
+};
+
+const places: Place[] = [
+  {
+    time: "5:00 AM",
+    period: "START",
+    title: "Wake Up",
+    subtitle: "The day begins",
+    emoji: "☀️",
+    description:
+      "Wake up early and get ready for a beautiful day exploring Chennai.",
+    address: "",
+    map: "",
+    type: "start",
+  },
+
   {
     time: "5:30 AM",
     period: "SUNRISE",
@@ -106,150 +131,123 @@ const places = [
 
 export default function Page() {
   const [selected, setSelected] = useState<number | null>(null);
-
   const [showTicket, setShowTicket] = useState(false);
 
-  // Stores completed itinerary indexes
   const [completed, setCompleted] = useState<number[]>([]);
+  const [sending, setSending] = useState<number | null>(null);
+  const [emailStatus, setEmailStatus] = useState<
+    Record<number, "success" | "error">
+  >({});
 
-  // Controls final celebration
-  const [celebration, setCelebration] = useState(false);
+  const [showCelebration, setShowCelebration] = useState(false);
 
-  // Number of completed locations
-  const completedCount = completed.length;
+  function celebration() {
+    setShowCelebration(true);
 
-  // All 7 locations completed
-  const allCompleted = completedCount === places.length;
+    setTimeout(() => {
+      setShowCelebration(false);
+    }, 3500);
+  }
 
-  /*
-   * MARK LOCATION COMPLETE
-   */
-  const toggleComplete = (index: number) => {
-    const alreadyCompleted = completed.includes(index);
-
-    if (alreadyCompleted) {
-      // Remove completion
+  async function markComplete(
+    index: number,
+    place: Place
+  ) {
+    if (completed.includes(index)) {
       setCompleted((prev) =>
         prev.filter((item) => item !== index)
       );
 
+      setEmailStatus((prev) => {
+        const copy = { ...prev };
+        delete copy[index];
+        return copy;
+      });
+
       return;
     }
 
-    // Add completion
-    setCompleted((prev) => [...prev, index]);
+    setCompleted((prev) => [
+      ...prev,
+      index,
+    ]);
 
-    // Small celebration
-    smallCelebration();
-  };
+    celebration();
 
-  /*
-   * SMALL CONFETTI / PARTICLE EFFECT
-   */
-  const smallCelebration = () => {
-    const amount = 35;
+    setSending(index);
 
-    for (let i = 0; i < amount; i++) {
-      const particle = document.createElement("div");
-
-      particle.className = "celebrationParticle";
-
-      particle.style.left = `${45 + Math.random() * 10}%`;
-      particle.style.top = `${45 + Math.random() * 10}%`;
-
-      particle.style.setProperty(
-        "--x",
-        `${(Math.random() - 0.5) * 500}px`
+    try {
+      const response = await fetch(
+        "/api/complete",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            place: place.title,
+            time: place.time,
+            period: place.period,
+          }),
+        }
       );
 
-      particle.style.setProperty(
-        "--y",
-        `${(Math.random() - 0.5) * 500}px`
-      );
+      const result = await response.json();
 
-      particle.style.setProperty(
-        "--r",
-        `${Math.random() * 720}deg`
-      );
-
-      document.body.appendChild(particle);
-
-      setTimeout(() => {
-        particle.remove();
-      }, 1200);
-    }
-  };
-
-  /*
-   * BIG FINAL CELEBRATION
-   */
-  const finalCelebration = () => {
-    if (!allCompleted) return;
-
-    setCelebration(true);
-
-    // Massive particle burst
-    for (let i = 0; i < 180; i++) {
-      const particle = document.createElement("div");
-
-      particle.className = "celebrationParticle big";
-
-      particle.style.left = `${45 + Math.random() * 10}%`;
-      particle.style.top = `${45 + Math.random() * 10}%`;
-
-      particle.style.setProperty(
-        "--x",
-        `${(Math.random() - 0.5) * 1000}px`
-      );
-
-      particle.style.setProperty(
-        "--y",
-        `${(Math.random() - 0.5) * 900}px`
-      );
-
-      particle.style.setProperty(
-        "--r",
-        `${Math.random() * 1000}deg`
-      );
-
-      document.body.appendChild(particle);
-
-      setTimeout(() => {
-        particle.remove();
-      }, 1800);
-    }
-
-    // Lightning flashes
-    document.body.classList.add("celebrationFlash");
-
-    setTimeout(() => {
-      document.body.classList.remove("celebrationFlash");
-    }, 1800);
-  };
-
-  /*
-   * ESCAPE KEY CLOSES CELEBRATION
-   */
-  useEffect(() => {
-    const handleKey = (event: KeyboardEvent) => {
-      if (event.key === "Escape") {
-        setCelebration(false);
+      if (!response.ok || !result.success) {
+        throw new Error(
+          result.error || "Email failed"
+        );
       }
-    };
 
-    window.addEventListener("keydown", handleKey);
+      setEmailStatus((prev) => ({
+        ...prev,
+        [index]: "success",
+      }));
+    } catch (error) {
+      console.error(error);
 
-    return () => {
-      window.removeEventListener("keydown", handleKey);
-    };
-  }, []);
+      setEmailStatus((prev) => ({
+        ...prev,
+        [index]: "error",
+      }));
+    } finally {
+      setSending(null);
+    }
+  }
 
   return (
     <main className="site">
 
-      {/* =====================================================
-          HERO
-      ====================================================== */}
+      {/* CELEBRATION */}
+
+      {showCelebration && (
+        <div className="celebration">
+
+          <div className="firework firework1">✨</div>
+          <div className="firework firework2">🎉</div>
+          <div className="firework firework3">✨</div>
+          <div className="firework firework4">💫</div>
+          <div className="firework firework5">🎊</div>
+
+          <div className="celebrationMessage">
+            <div className="bigHeart">
+              ♥
+            </div>
+
+            <h2>
+              Completed!
+            </h2>
+
+            <p>
+              Another beautiful memory ❤️
+            </p>
+          </div>
+
+        </div>
+      )}
+
+      {/* HERO */}
 
       <section className="hero">
 
@@ -319,8 +317,13 @@ export default function Page() {
             href="#itinerary"
             className="startButton"
           >
-            <span>Start our journey</span>
-            <strong>↓</strong>
+            <span>
+              Start our journey
+            </span>
+
+            <strong>
+              ↓
+            </strong>
           </a>
 
         </div>
@@ -339,10 +342,7 @@ export default function Page() {
 
       </section>
 
-
-      {/* =====================================================
-          INTRO
-      ====================================================== */}
+      {/* INTRO */}
 
       <section className="intro">
 
@@ -369,10 +369,7 @@ export default function Page() {
 
       </section>
 
-
-      {/* =====================================================
-          ITINERARY
-      ====================================================== */}
+      {/* ITINERARY */}
 
       <section
         className="itinerary"
@@ -393,36 +390,12 @@ export default function Page() {
 
           </div>
 
-          <div className="progressBox">
-
-            <span>
-              {completedCount}/{places.length}
-            </span>
-
-            <small>
-              LOCATIONS COMPLETED
-            </small>
-
-            <div className="progressBar">
-              <div
-                className="progressFill"
-                style={{
-                  width: `${
-                    (completedCount / places.length) * 100
-                  }%`,
-                }}
-              />
-            </div>
-
-          </div>
-
           <p className="sectionDescription">
             Follow the day from the first light of morning
             to dinner at night.
           </p>
 
         </div>
-
 
         <div className="timeline">
 
@@ -433,34 +406,29 @@ export default function Page() {
             const isCompleted =
               completed.includes(index);
 
-            const isSelected =
-              selected === index;
-
             return (
-
               <article
                 className={`timelineItem ${
-                  isSelected ? "active" : ""
+                  selected === index
+                    ? "active"
+                    : ""
                 } ${
-                  isCompleted ? "completedItem" : ""
+                  isCompleted
+                    ? "completedItem"
+                    : ""
                 }`}
                 key={place.title}
               >
 
                 <div className="timelineDot">
 
-                  {isCompleted ? (
-                    <span className="checkMark">
-                      ✓
-                    </span>
-                  ) : (
-                    <span>
-                      {index + 1}
-                    </span>
-                  )}
+                  <span>
+                    {isCompleted
+                      ? "✓"
+                      : index + 1}
+                  </span>
 
                 </div>
-
 
                 <div className="time">
 
@@ -472,16 +440,21 @@ export default function Page() {
 
                 </div>
 
-
                 <div
                   className={`placeCard ${place.type} ${
-                    isSelected ? "activeCard" : ""
+                    selected === index
+                      ? "activeCard"
+                      : ""
                   } ${
-                    isCompleted ? "completedCard" : ""
+                    isCompleted
+                      ? "completedCard"
+                      : ""
                   }`}
                   onClick={() =>
                     setSelected(
-                      isSelected ? null : index
+                      selected === index
+                        ? null
+                        : index
                     )
                   }
                 >
@@ -493,11 +466,12 @@ export default function Page() {
                     </div>
 
                     <div className="cardArrow">
-                      {isSelected ? "−" : "+"}
+                      {selected === index
+                        ? "−"
+                        : "+"}
                     </div>
 
                   </div>
-
 
                   <h3>
                     {place.title}
@@ -507,13 +481,11 @@ export default function Page() {
                     {place.subtitle}
                   </p>
 
-
                   <div className="cardDetails">
 
                     <p>
                       {place.description}
                     </p>
-
 
                     {place.address && (
 
@@ -531,7 +503,6 @@ export default function Page() {
 
                     )}
 
-
                     {place.map && (
 
                       <a
@@ -548,10 +519,72 @@ export default function Page() {
 
                     )}
 
+                    {/* COMPLETE BUTTON */}
 
-                    {/* =====================================
-                        VGP TICKET
-                    ====================================== */}
+                    {place.title !== "Wake Up" && (
+
+                      <div
+                        className="completeArea"
+                        onClick={(e) =>
+                          e.stopPropagation()
+                        }
+                      >
+
+                        <button
+                          type="button"
+                          className={`completeButton ${
+                            isCompleted
+                              ? "completed"
+                              : ""
+                          }`}
+                          onClick={() =>
+                            markComplete(
+                              index,
+                              place
+                            )
+                          }
+                          disabled={
+                            sending === index
+                          }
+                        >
+
+                          {sending === index ? (
+                            <>
+                              <span className="spinner" />
+                              Sending...
+                            </>
+                          ) : isCompleted ? (
+                            <>
+                              ✓ Completed
+                            </>
+                          ) : (
+                            <>
+                              □ Mark Complete
+                            </>
+                          )}
+
+                        </button>
+
+                        {emailStatus[index] ===
+                          "success" && (
+                          <p className="emailSuccess">
+                            📧 Email sent to Kshitij
+                          </p>
+                        )}
+
+                        {emailStatus[index] ===
+                          "error" && (
+                          <p className="emailError">
+                            ⚠️ Completed, but email
+                            could not be sent.
+                          </p>
+                        )}
+
+                      </div>
+
+                    )}
+
+                    {/* VGP TICKET */}
 
                     {place.title ===
                       "VGP Marine Kingdom" && (
@@ -567,7 +600,9 @@ export default function Page() {
                           type="button"
                           className="ticketButton"
                           onClick={() =>
-                            setShowTicket(!showTicket)
+                            setShowTicket(
+                              !showTicket
+                            )
                           }
                         >
                           🎟️{" "}
@@ -575,7 +610,6 @@ export default function Page() {
                             ? "Hide Ticket"
                             : "View Ticket"}
                         </button>
-
 
                         {showTicket && (
 
@@ -608,85 +642,19 @@ export default function Page() {
 
                     )}
 
-
-                    {/* =====================================
-                        COMPLETE BUTTON
-                    ====================================== */}
-
-                    <button
-                      type="button"
-                      className={`completeButton ${
-                        isCompleted
-                          ? "completeButtonDone"
-                          : ""
-                      }`}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        toggleComplete(index);
-                      }}
-                    >
-
-                      {isCompleted ? (
-                        <>
-                          ✓ Completed
-                          <span>✨</span>
-                        </>
-                      ) : (
-                        <>
-                          □ Mark Complete
-                        </>
-                      )}
-
-                    </button>
-
                   </div>
 
                 </div>
 
               </article>
-
             );
           })}
 
         </div>
 
-
-        {/* =================================================
-            FINAL COMPLETE BUTTON
-        ================================================== */}
-
-        {allCompleted && (
-
-          <div className="completeDayArea">
-
-            <div className="completeDayLine" />
-
-            <p>
-              YOU DID IT
-            </p>
-
-            <h3>
-              All locations completed.
-            </h3>
-
-            <button
-              type="button"
-              className="finishButton"
-              onClick={finalCelebration}
-            >
-              🎉 COMPLETE THE DAY 🎉
-            </button>
-
-          </div>
-
-        )}
-
       </section>
 
-
-      {/* =====================================================
-          SUNSET
-      ====================================================== */}
+      {/* SUNSET */}
 
       <section className="visualSection">
 
@@ -726,10 +694,7 @@ export default function Page() {
 
       </section>
 
-
-      {/* =====================================================
-          FOOD
-      ====================================================== */}
+      {/* FOOD */}
 
       <section className="foodSection">
 
@@ -752,14 +717,11 @@ export default function Page() {
 
         </div>
 
-
         <div className="foodCards">
 
           <div className="foodCard">
 
-            <span>
-              🍽️
-            </span>
+            <span>🍽️</span>
 
             <small>
               BREAKFAST · 7:30–8:00 AM
@@ -775,12 +737,9 @@ export default function Page() {
 
           </div>
 
-
           <div className="foodCard">
 
-            <span>
-              🍛
-            </span>
+            <span>🍛</span>
 
             <small>
               LUNCH · 1:00 PM
@@ -796,12 +755,9 @@ export default function Page() {
 
           </div>
 
-
           <div className="foodCard">
 
-            <span>
-              🍜
-            </span>
+            <span>🍜</span>
 
             <small>
               EVENING · DINNER
@@ -821,10 +777,7 @@ export default function Page() {
 
       </section>
 
-
-      {/* =====================================================
-          SUMMARY
-      ====================================================== */}
+      {/* SUMMARY */}
 
       <section className="summary">
 
@@ -860,10 +813,7 @@ export default function Page() {
 
       </section>
 
-
-      {/* =====================================================
-          FINAL
-      ====================================================== */}
+      {/* FINAL */}
 
       <section className="final">
 
@@ -899,11 +849,6 @@ export default function Page() {
 
       </section>
 
-
-      {/* =====================================================
-          FOOTER
-      ====================================================== */}
-
       <footer>
 
         <div>
@@ -915,63 +860,6 @@ export default function Page() {
         </div>
 
       </footer>
-
-
-      {/* =====================================================
-          BIG CELEBRATION POPUP
-      ====================================================== */}
-
-      {celebration && (
-
-        <div
-          className="celebrationOverlay"
-          onClick={() => setCelebration(false)}
-        >
-
-          <div
-            className="celebrationBox"
-            onClick={(e) =>
-              e.stopPropagation()
-            }
-          >
-
-            <div className="celebrationEmoji">
-              🎉
-            </div>
-
-            <p>
-              CHENNAI DAY COMPLETE
-            </p>
-
-            <h2>
-              You made
-              <br />
-              <span>every moment count.</span>
-            </h2>
-
-            <div className="celebrationHearts">
-              ❤️ ✨ ❤️ ✨ ❤️
-            </div>
-
-            <button
-              type="button"
-              onClick={() =>
-                setCelebration(false)
-              }
-            >
-              Continue ❤️
-            </button>
-
-          </div>
-
-        </div>
-
-      )}
-
-
-      {/* =====================================================
-          CSS
-      ====================================================== */}
 
       <style jsx>{`
 
@@ -999,33 +887,155 @@ export default function Page() {
             sans-serif;
         }
 
+        /* CELEBRATION */
 
-        /* =========================
-           HERO
-        ========================== */
+        .celebration {
+          position: fixed;
+          inset: 0;
+          z-index: 9999;
+          pointer-events: none;
+          overflow: hidden;
+          background:
+            radial-gradient(
+              circle at center,
+              rgba(247,181,93,0.12),
+              transparent 45%
+            );
+        }
+
+        .celebrationMessage {
+          position: absolute;
+          left: 50%;
+          top: 50%;
+          transform: translate(-50%, -50%);
+          text-align: center;
+          padding: 35px 50px;
+          background: rgba(29,27,25,0.94);
+          border: 1px solid rgba(247,181,93,0.5);
+          box-shadow:
+            0 0 80px rgba(247,181,93,0.3);
+          animation: celebrationPop 0.5s ease-out;
+        }
+
+        .celebrationMessage h2 {
+          margin: 0;
+          color: white;
+          font-family: Georgia, serif;
+          font-size: 45px;
+        }
+
+        .celebrationMessage p {
+          color: #f7b55d;
+          margin-bottom: 0;
+        }
+
+        .bigHeart {
+          color: #f7b55d;
+          font-size: 45px;
+          animation: heartBeat 0.8s infinite;
+        }
+
+        .firework {
+          position: absolute;
+          font-size: 35px;
+          animation: fly 2.5s ease-out forwards;
+        }
+
+        .firework1 {
+          left: 15%;
+          top: 25%;
+        }
+
+        .firework2 {
+          left: 80%;
+          top: 20%;
+          animation-delay: 0.2s;
+        }
+
+        .firework3 {
+          left: 25%;
+          top: 70%;
+          animation-delay: 0.4s;
+        }
+
+        .firework4 {
+          left: 75%;
+          top: 65%;
+          animation-delay: 0.1s;
+        }
+
+        .firework5 {
+          left: 50%;
+          top: 15%;
+          animation-delay: 0.3s;
+        }
+
+        @keyframes fly {
+          0% {
+            transform: scale(0.2) rotate(0deg);
+            opacity: 0;
+          }
+
+          20% {
+            opacity: 1;
+          }
+
+          70% {
+            transform: scale(1.8) rotate(180deg);
+            opacity: 1;
+          }
+
+          100% {
+            transform: scale(0.5) rotate(360deg);
+            opacity: 0;
+          }
+        }
+
+        @keyframes celebrationPop {
+          0% {
+            transform: translate(-50%, -50%) scale(0.5);
+            opacity: 0;
+          }
+
+          100% {
+            transform: translate(-50%, -50%) scale(1);
+            opacity: 1;
+          }
+        }
+
+        @keyframes heartBeat {
+
+          0%,100% {
+            transform: scale(1);
+          }
+
+          50% {
+            transform: scale(1.25);
+          }
+
+        }
+
+        /* HERO */
 
         .hero {
           min-height: 100vh;
           position: relative;
-
           display: flex;
           flex-direction: column;
           justify-content: space-between;
-
           color: white;
 
           background-image:
             linear-gradient(
               90deg,
-              rgba(0, 0, 0, 0.72),
-              rgba(0, 0, 0, 0.2)
+              rgba(0,0,0,0.72),
+              rgba(0,0,0,0.2)
             ),
             url("https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=2200&q=85");
 
           background-size: cover;
           background-position: center;
         }
-
 
         .heroOverlay {
           position: absolute;
@@ -1034,42 +1044,35 @@ export default function Page() {
           background:
             radial-gradient(
               circle at 70% 40%,
-              rgba(255, 173, 93, 0.2),
+              rgba(255,173,93,0.2),
               transparent 35%
             );
 
           pointer-events: none;
         }
 
-
         .nav {
           position: relative;
           z-index: 2;
-
           padding: 28px 5vw;
 
           display: flex;
           justify-content: space-between;
           align-items: center;
-
           gap: 20px;
         }
-
 
         .logo {
           font-size: 14px;
           font-weight: 800;
           letter-spacing: 3px;
-
           white-space: nowrap;
         }
-
 
         .logo span {
           color: #f6b45c;
           padding: 0 5px;
         }
-
 
         .topActions {
           display: flex;
@@ -1077,26 +1080,21 @@ export default function Page() {
           gap: 10px;
         }
 
-
         .contactButton {
           display: inline-flex;
           align-items: center;
           gap: 7px;
 
           text-decoration: none;
-
           padding: 11px 16px;
-
           border-radius: 30px;
 
           font-size: 12px;
           font-weight: 700;
 
           transition: 0.3s;
-
           white-space: nowrap;
         }
-
 
         .callButton {
           background: rgba(255,255,255,0.14);
@@ -1104,1976 +1102,999 @@ export default function Page() {
           color: white;
         }
 
-
         .whatsappButton {
           background: #25d366;
           border: 1px solid #25d366;
           color: white;
         }
 
-
         .contactButton:hover {
           transform: translateY(-2px);
         }
-
 
         .callButton:hover {
           background: white;
           color: #191817;
         }
 
-
-        .whatsappButton:hover {
-          background: #20bd5a;
-        }
-
-
         .navButton {
           border: 1px solid rgba(255,255,255,0.4);
-
           color: white;
-
           text-decoration: none;
-
           padding: 11px 18px;
-
           border-radius: 30px;
-
           font-size: 12px;
-
           transition: 0.3s;
-
           white-space: nowrap;
         }
-
 
         .navButton:hover {
           background: white;
           color: black;
         }
 
-
         .heroContent {
           position: relative;
           z-index: 2;
-
           padding: 8vh 9vw;
-
           max-width: 900px;
         }
-
 
         .eyebrow {
           font-size: 11px;
           letter-spacing: 4px;
           font-weight: 700;
-
           margin: 0 0 20px;
-
           opacity: 0.75;
         }
 
-
         .hero h1 {
           font-size: clamp(65px, 11vw, 150px);
-
           line-height: 0.82;
-
           letter-spacing: -7px;
-
           margin: 0;
-
           font-weight: 800;
         }
-
 
         .hero h1 span {
           color: #f7b55d;
         }
 
-
         .heroLine {
           width: 90px;
           height: 2px;
-
           background: #f7b55d;
-
           margin: 35px 0 18px;
         }
 
-
         .dedication {
           font-family: Georgia, serif;
-
           font-size: 30px;
-
           margin: 0 0 10px;
         }
-
 
         .dedication span {
           color: #f7b55d;
         }
 
-
         .heroText {
           font-size: 15px;
-
           line-height: 1.7;
-
           opacity: 0.8;
         }
 
-
         .startButton {
           margin-top: 25px;
-
           display: inline-flex;
-
           align-items: center;
-
           gap: 20px;
-
           background: #f7b55d;
-
           color: #171513;
-
           text-decoration: none;
-
           padding: 15px 20px;
-
           font-size: 12px;
-
           font-weight: 800;
-
           text-transform: uppercase;
-
           letter-spacing: 1px;
-
           transition: 0.3s;
         }
-
 
         .startButton:hover {
           transform: translateY(-3px);
         }
 
-
         .startButton strong {
           font-size: 18px;
         }
 
-
         .heroBottom {
           position: relative;
           z-index: 2;
-
           padding: 25px 5vw;
-
           display: flex;
-
           justify-content: space-between;
-
           font-size: 9px;
-
           letter-spacing: 3px;
-
           opacity: 0.6;
         }
 
-
-        /* =========================
-           INTRO
-        ========================== */
+        /* INTRO */
 
         .intro {
           padding: 130px 10vw;
-
           display: grid;
-
           grid-template-columns: 1fr 2fr;
-
           gap: 50px;
-
           background: #f5f1e9;
         }
 
-
         .introSmall {
           font-size: 10px;
-
           letter-spacing: 4px;
-
           font-weight: 800;
         }
-
 
         .introText {
           max-width: 800px;
         }
 
-
         .intro h2 {
           font-family: Georgia, serif;
-
           font-size: clamp(45px, 6vw, 85px);
-
           line-height: 0.95;
-
           font-weight: 400;
-
           letter-spacing: -4px;
-
           margin: 0 0 30px;
         }
-
 
         .intro h2 em {
           color: #a56734;
         }
 
-
         .intro p {
           max-width: 550px;
-
           font-size: 16px;
-
           line-height: 1.8;
-
           color: #6e685f;
         }
 
-
-        /* =========================
-           ITINERARY
-        ========================== */
+        /* ITINERARY */
 
         .itinerary {
           background: #ebe5da;
-
           padding: 120px 8vw;
         }
 
-
         .sectionHeading {
           display: flex;
-
           justify-content: space-between;
-
           align-items: end;
-
-          gap: 40px;
-
           margin-bottom: 90px;
         }
 
-
         .eyebrow.dark {
           color: #8b623b;
-
           opacity: 1;
         }
 
-
         .sectionHeading h2 {
           font-family: Georgia, serif;
-
           font-size: clamp(45px, 6vw, 80px);
-
           line-height: 0.9;
-
           font-weight: 400;
-
           margin: 0;
-
           letter-spacing: -3px;
         }
 
-
         .sectionDescription {
           max-width: 280px;
-
           line-height: 1.6;
-
           color: #6d675f;
-
           font-size: 14px;
         }
 
-
-        /* =========================
-           PROGRESS
-        ========================== */
-
-        .progressBox {
-          min-width: 170px;
-
-          text-align: center;
-        }
-
-
-        .progressBox > span {
-          display: block;
-
-          font-family: Georgia, serif;
-
-          font-size: 30px;
-
-          color: #8b623b;
-        }
-
-
-        .progressBox small {
-          display: block;
-
-          font-size: 8px;
-
-          letter-spacing: 2px;
-
-          color: #777069;
-
-          margin: 5px 0 12px;
-        }
-
-
-        .progressBar {
-          width: 100%;
-
-          height: 5px;
-
-          background: #d4c9b9;
-
-          overflow: hidden;
-        }
-
-
-        .progressFill {
-          height: 100%;
-
-          background: #a56734;
-
-          transition: width 0.5s ease;
-        }
-
-
         .timeline {
           max-width: 1000px;
-
           margin: auto;
-
           position: relative;
         }
-
 
         .timelineLine {
           position: absolute;
-
           left: 150px;
-
           top: 0;
-
           bottom: 0;
-
           width: 1px;
-
           background: #cfc6b8;
         }
 
-
         .timelineItem {
           position: relative;
-
           display: grid;
-
-          grid-template-columns:
-            120px
-            60px
-            1fr;
-
+          grid-template-columns: 120px 60px 1fr;
           gap: 20px;
-
           margin-bottom: 35px;
-
           align-items: start;
         }
 
-
         .timelineDot {
           position: relative;
-
           z-index: 2;
-
           grid-column: 2;
-
           width: 40px;
-
           height: 40px;
-
           border-radius: 50%;
-
           background: #f5f1e9;
-
           border: 1px solid #bfb4a5;
-
           display: flex;
-
           justify-content: center;
-
           align-items: center;
-
           font-size: 11px;
-
           font-weight: 700;
-
           transition: 0.3s;
         }
 
-
         .completedItem .timelineDot {
-          background: #a56734;
-
+          background: #10b981;
           color: white;
-
-          border-color: #a56734;
-
+          border-color: #10b981;
           box-shadow:
-            0 0 0 6px rgba(165,103,52,0.12),
-            0 0 25px rgba(165,103,52,0.35);
+            0 0 0 6px rgba(16,185,129,0.12),
+            0 0 25px rgba(16,185,129,0.3);
         }
-
-
-        .checkMark {
-          font-size: 18px;
-        }
-
 
         .time {
           grid-column: 1;
-
           grid-row: 1;
-
           text-align: right;
-
           font-size: 12px;
-
           font-weight: 800;
-
           padding-top: 12px;
         }
 
-
         .time small {
           display: block;
-
           color: #9a7045;
-
           font-size: 8px;
-
           letter-spacing: 2px;
-
           margin-top: 5px;
         }
 
-
         .placeCard {
           grid-column: 3;
-
           background: #f8f5ef;
-
           padding: 30px;
-
           cursor: pointer;
-
           transition:
             transform 0.3s,
-            box-shadow 0.3s,
-            border 0.3s;
-
+            box-shadow 0.3s;
           border: 1px solid transparent;
         }
-
 
         .placeCard:hover,
         .placeCard.activeCard {
           transform: translateY(-4px);
-
           box-shadow:
             0 20px 45px
-            rgba(70, 55, 35, 0.1);
-
+            rgba(70,55,35,0.1);
           border-color: #d8c6ac;
         }
 
-
         .placeCard.completedCard {
-          border-color: #a56734;
-
+          border-color: #10b981;
           box-shadow:
-            0 10px 30px
-            rgba(165,103,52,0.12);
+            0 15px 40px
+            rgba(16,185,129,0.1);
         }
-
 
         .cardTop {
           display: flex;
-
           justify-content: space-between;
-
           align-items: center;
         }
-
 
         .placeEmoji {
           font-size: 30px;
         }
 
-
         .cardArrow {
           width: 30px;
-
           height: 30px;
-
           border: 1px solid #d5cbbb;
-
           border-radius: 50%;
-
           display: flex;
-
           justify-content: center;
-
           align-items: center;
-
           color: #8b623b;
-
           font-size: 18px;
         }
 
-
         .placeCard h3 {
           font-family: Georgia, serif;
-
           font-size: 35px;
-
           font-weight: 400;
-
           margin: 20px 0 5px;
-
           letter-spacing: -1px;
         }
 
-
         .subtitle {
           color: #a06f3c;
-
           font-size: 11px;
-
           text-transform: uppercase;
-
           letter-spacing: 2px;
-
           font-weight: 700;
-
           margin: 0;
         }
 
-
         .cardDetails {
           max-height: 0;
-
           overflow: hidden;
-
-          transition: max-height 0.5s ease;
+          transition: max-height 0.4s ease;
         }
-
 
         .active .cardDetails {
-          max-height: 1500px;
+          max-height: 1400px;
         }
-
 
         .cardDetails > p {
           color: #686159;
-
           line-height: 1.7;
-
           font-size: 14px;
-
           margin-top: 25px;
         }
 
-
         .address {
           display: flex;
-
           gap: 8px;
-
           font-size: 12px;
-
           color: #777069;
-
           line-height: 1.5;
-
           margin-top: 15px;
         }
 
-
         .mapButton {
           display: inline-block;
-
           margin-top: 20px;
-
           padding: 11px 17px;
-
           background: #1d1b19;
-
           color: white;
-
           text-decoration: none;
-
           font-size: 11px;
-
           text-transform: uppercase;
-
           letter-spacing: 1px;
-
           transition: 0.3s;
         }
-
 
         .mapButton:hover {
           background: #a56734;
         }
 
+        /* COMPLETE */
 
-        /* =========================
-           COMPLETE BUTTON
-        ========================== */
-
-        .completeButton {
-          width: 100%;
-
+        .completeArea {
           margin-top: 25px;
-
-          padding: 14px 18px;
-
-          border: 1px solid #b9ad9d;
-
-          background: transparent;
-
-          color: #4f4942;
-
-          font-size: 11px;
-
-          font-weight: 800;
-
-          letter-spacing: 1.5px;
-
-          text-transform: uppercase;
-
-          cursor: pointer;
-
-          transition: 0.3s;
-        }
-
-
-        .completeButton:hover {
-          background: #1d1b19;
-
-          border-color: #1d1b19;
-
-          color: white;
-
-          transform: translateY(-2px);
-        }
-
-
-        .completeButtonDone {
-          background: #a56734;
-
-          color: white;
-
-          border-color: #a56734;
-
-          box-shadow:
-            0 8px 20px
-            rgba(165,103,52,0.2);
-        }
-
-
-        .completeButtonDone:hover {
-          background: #7d4d27;
-
-          border-color: #7d4d27;
-        }
-
-
-        /* =========================
-           VGP TICKET
-        ========================== */
-
-        .ticketArea {
-          margin-top: 25px;
-
           padding-top: 20px;
-
           border-top: 1px solid #ddd3c5;
         }
 
-
-        .ticketButton {
-          border: none;
-
-          background: #a56734;
-
+        .completeButton {
+          width: 100%;
+          border: 1px solid #1d1b19;
+          background: #1d1b19;
           color: white;
-
-          padding: 13px 18px;
-
+          padding: 14px 18px;
           font-size: 11px;
-
           font-weight: 800;
-
           letter-spacing: 1px;
-
           text-transform: uppercase;
-
           cursor: pointer;
-
           transition: 0.3s;
         }
 
-
-        .ticketButton:hover {
-          background: #7d4d27;
-
+        .completeButton:hover {
+          background: #a56734;
+          border-color: #a56734;
           transform: translateY(-2px);
         }
 
+        .completeButton.completed {
+          background: #10b981;
+          border-color: #10b981;
+          color: white;
+        }
+
+        .completeButton:disabled {
+          cursor: wait;
+          opacity: 0.8;
+        }
+
+        .spinner {
+          display: inline-block;
+          width: 12px;
+          height: 12px;
+          border: 2px solid rgba(255,255,255,0.4);
+          border-top-color: white;
+          border-radius: 50%;
+          margin-right: 8px;
+          vertical-align: -2px;
+          animation: spin 0.7s linear infinite;
+        }
+
+        @keyframes spin {
+          to {
+            transform: rotate(360deg);
+          }
+        }
+
+        .emailSuccess {
+          color: #059669 !important;
+          font-size: 11px !important;
+          margin: 10px 0 0 !important;
+        }
+
+        .emailError {
+          color: #dc2626 !important;
+          font-size: 11px !important;
+          margin: 10px 0 0 !important;
+        }
+
+        /* TICKET */
+
+        .ticketArea {
+          margin-top: 25px;
+          padding-top: 20px;
+          border-top: 1px solid #ddd3c5;
+        }
+
+        .ticketButton {
+          border: none;
+          background: #a56734;
+          color: white;
+          padding: 13px 18px;
+          font-size: 11px;
+          font-weight: 800;
+          letter-spacing: 1px;
+          text-transform: uppercase;
+          cursor: pointer;
+          transition: 0.3s;
+        }
+
+        .ticketButton:hover {
+          background: #7d4d27;
+          transform: translateY(-2px);
+        }
 
         .ticketBox {
           margin-top: 20px;
-
           padding: 15px;
-
           background: #eee8dd;
-
           border: 1px solid #d7cbbb;
         }
 
-
         .ticketTitle {
           font-size: 10px;
-
           letter-spacing: 2px;
-
           font-weight: 800;
-
           color: #765132;
-
           margin: 0 0 15px;
         }
 
-
         .ticketImage {
           display: block;
-
           width: 100%;
-
           max-width: 600px;
-
           height: auto;
-
           margin: 0 auto;
-
           border-radius: 4px;
-
           box-shadow:
             0 10px 25px
             rgba(0,0,0,0.12);
         }
 
-
         .ticketOpen {
           display: inline-block;
-
           margin-top: 15px;
-
           padding: 10px 15px;
-
           background: #1d1b19;
-
           color: white;
-
           text-decoration: none;
-
           font-size: 10px;
-
           letter-spacing: 1px;
-
           text-transform: uppercase;
         }
 
-
-        /* =========================
-           COMPLETE DAY
-        ========================== */
-
-        .completeDayArea {
-          max-width: 700px;
-
-          margin: 100px auto 20px;
-
-          text-align: center;
-
-          padding: 60px 30px;
-
-          background:
-            linear-gradient(
-              135deg,
-              #f8f5ef,
-              #e8d4b9
-            );
-
-          border: 1px solid #c59c6d;
-
-          box-shadow:
-            0 25px 60px
-            rgba(80,55,30,0.12);
-
-          animation: completeAppear 0.7s ease;
-        }
-
-
-        @keyframes completeAppear {
-          from {
-            opacity: 0;
-            transform: translateY(30px);
-          }
-
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
-        }
-
-
-        .completeDayArea > p {
-          margin: 0 0 10px;
-
-          font-size: 10px;
-
-          font-weight: 800;
-
-          letter-spacing: 4px;
-
-          color: #986538;
-        }
-
-
-        .completeDayArea h3 {
-          font-family: Georgia, serif;
-
-          font-weight: 400;
-
-          font-size: 38px;
-
-          margin: 0 0 30px;
-        }
-
-
-        .finishButton {
-          border: none;
-
-          background: #1d1b19;
-
-          color: white;
-
-          padding: 18px 30px;
-
-          font-size: 12px;
-
-          font-weight: 800;
-
-          letter-spacing: 2px;
-
-          cursor: pointer;
-
-          transition: 0.3s;
-
-          box-shadow:
-            0 10px 25px
-            rgba(0,0,0,0.2);
-        }
-
-
-        .finishButton:hover {
-          background: #a56734;
-
-          transform: translateY(-4px);
-
-          box-shadow:
-            0 15px 35px
-            rgba(165,103,52,0.3);
-        }
-
-
-        /* =========================
-           PARTICLES
-        ========================== */
-
-        .celebrationParticle {
-          position: fixed;
-
-          z-index: 99999;
-
-          width: 9px;
-
-          height: 15px;
-
-          background: #f1ae59;
-
-          pointer-events: none;
-
-          animation:
-            particleFly 1.2s
-            cubic-bezier(.2,.8,.3,1)
-            forwards;
-        }
-
-
-        .celebrationParticle:nth-child(3n) {
-          background: #ffffff;
-        }
-
-
-        .celebrationParticle:nth-child(4n) {
-          background: #a56734;
-        }
-
-
-        .celebrationParticle:nth-child(5n) {
-          background: #f3d49e;
-        }
-
-
-        .celebrationParticle.big {
-          width: 12px;
-
-          height: 20px;
-
-          animation-duration: 1.8s;
-        }
-
-
-        @keyframes particleFly {
-
-          0% {
-            opacity: 1;
-
-            transform:
-              translate(0, 0)
-              rotate(0deg)
-              scale(1);
-          }
-
-          100% {
-            opacity: 0;
-
-            transform:
-              translate(var(--x), var(--y))
-              rotate(var(--r))
-              scale(0.5);
-          }
-
-        }
-
-
-        /* =========================
-           CELEBRATION FLASH
-        ========================== */
-
-        .celebrationFlash::before {
-          content: "";
-
-          position: fixed;
-
-          inset: 0;
-
-          z-index: 99998;
-
-          pointer-events: none;
-
-          background: white;
-
-          animation: flash 1.8s ease;
-        }
-
-
-        @keyframes flash {
-
-          0% {
-            opacity: 0;
-          }
-
-          8% {
-            opacity: 0.8;
-          }
-
-          15% {
-            opacity: 0;
-          }
-
-          25% {
-            opacity: 0.5;
-          }
-
-          35% {
-            opacity: 0;
-          }
-
-          100% {
-            opacity: 0;
-          }
-
-        }
-
-
-        /* =========================
-           CELEBRATION POPUP
-        ========================== */
-
-        .celebrationOverlay {
-          position: fixed;
-
-          inset: 0;
-
-          z-index: 100000;
-
-          background:
-            rgba(20,16,12,0.82);
-
-          backdrop-filter: blur(12px);
-
-          display: flex;
-
-          align-items: center;
-
-          justify-content: center;
-
-          padding: 25px;
-
-          animation: overlayAppear 0.4s ease;
-        }
-
-
-        @keyframes overlayAppear {
-
-          from {
-            opacity: 0;
-          }
-
-          to {
-            opacity: 1;
-          }
-
-        }
-
-
-        .celebrationBox {
-          width: min(700px, 100%);
-
-          padding: 70px 35px;
-
-          text-align: center;
-
-          color: white;
-
-          background:
-            radial-gradient(
-              circle at center,
-              #59402a,
-              #211c17 65%
-            );
-
-          border: 1px solid #b98a58;
-
-          box-shadow:
-            0 30px 100px
-            rgba(0,0,0,0.5);
-
-          animation:
-            celebrationBoxAppear
-            0.7s
-            cubic-bezier(.17,.89,.32,1.28);
-        }
-
-
-        @keyframes celebrationBoxAppear {
-
-          from {
-            transform: scale(0.7);
-
-            opacity: 0;
-          }
-
-          to {
-            transform: scale(1);
-
-            opacity: 1;
-          }
-
-        }
-
-
-        .celebrationEmoji {
-          font-size: 70px;
-
-          animation:
-            celebrationBounce
-            1s infinite;
-        }
-
-
-        @keyframes celebrationBounce {
-
-          0%,
-          100% {
-            transform: translateY(0);
-          }
-
-          50% {
-            transform: translateY(-12px);
-          }
-
-        }
-
-
-        .celebrationBox > p {
-          font-size: 10px;
-
-          letter-spacing: 4px;
-
-          color: #e9b86d;
-
-          font-weight: 800;
-        }
-
-
-        .celebrationBox h2 {
-          font-family: Georgia, serif;
-
-          font-weight: 400;
-
-          font-size: clamp(45px, 7vw, 75px);
-
-          line-height: 0.95;
-
-          letter-spacing: -3px;
-
-          margin: 20px 0;
-        }
-
-
-        .celebrationBox h2 span {
-          color: #f0ae5a;
-        }
-
-
-        .celebrationHearts {
-          font-size: 25px;
-
-          margin: 25px 0 35px;
-
-          letter-spacing: 8px;
-        }
-
-
-        .celebrationBox button {
-          border: 1px solid #d3a46d;
-
-          background: #d3a46d;
-
-          color: #211c17;
-
-          padding: 15px 30px;
-
-          font-weight: 800;
-
-          cursor: pointer;
-
-          transition: 0.3s;
-        }
-
-
-        .celebrationBox button:hover {
-          background: white;
-
-          border-color: white;
-        }
-
-
-        /* =========================
-           SUNSET
-        ========================== */
+        /* SUNSET */
 
         .visualSection {
           min-height: 750px;
-
           display: grid;
-
           grid-template-columns: 1fr 1fr;
-
           background: #1d1b19;
-
           color: white;
         }
 
-
         .visualImage {
           min-height: 600px;
-
           background-image:
             linear-gradient(
               rgba(0,0,0,0.05),
               rgba(0,0,0,0.25)
             ),
             url("https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1500&q=85");
-
           background-size: cover;
-
           background-position: center;
         }
 
-
         .visualContent {
           display: flex;
-
           flex-direction: column;
-
           justify-content: center;
-
           padding: 10vw;
         }
 
-
         .visualContent h2 {
           font-family: Georgia, serif;
-
           font-weight: 400;
-
-          font-size: clamp(50px, 6vw, 90px);
-
+          font-size: clamp(50px,6vw,90px);
           line-height: 0.9;
-
           letter-spacing: -4px;
-
           margin: 0 0 35px;
         }
-
 
         .visualContent h2 span {
           color: #f1ae59;
         }
 
-
         .visualContent > p {
           max-width: 400px;
-
           line-height: 1.8;
-
           color: #c3bdb5;
-
           font-size: 14px;
         }
 
-
         .sunsetTime {
           margin-top: 35px;
-
           padding-top: 25px;
-
           border-top: 1px solid #47433e;
         }
 
-
         .sunsetTime strong {
           display: block;
-
           color: #f1ae59;
-
           font-size: 24px;
-
           font-family: Georgia, serif;
         }
-
 
         .sunsetTime span {
           display: block;
-
           font-size: 9px;
-
           letter-spacing: 3px;
-
           margin-top: 8px;
-
           opacity: 0.6;
         }
 
-
-        /* =========================
-           FOOD
-        ========================== */
+        /* FOOD */
 
         .foodSection {
           padding: 130px 8vw;
-
           background: #f5f1e9;
         }
 
-
         .foodIntro {
           max-width: 650px;
-
           margin-bottom: 70px;
         }
 
-
         .foodIntro h2 {
           font-family: Georgia, serif;
-
-          font-size: clamp(50px, 6vw, 80px);
-
+          font-size: clamp(50px,6vw,80px);
           font-weight: 400;
-
           line-height: 0.9;
-
           letter-spacing: -4px;
-
           margin: 0 0 30px;
         }
 
-
         .foodIntro > p {
           color: #6f685f;
-
           line-height: 1.8;
         }
 
-
         .foodCards {
           display: grid;
-
-          grid-template-columns:
-            repeat(3, 1fr);
-
+          grid-template-columns: repeat(3,1fr);
           gap: 20px;
         }
 
-
         .foodCard {
           background: #ebe5da;
-
           padding: 40px;
-
           min-height: 280px;
-
           transition: 0.3s;
         }
-
 
         .foodCard:hover {
           transform: translateY(-6px);
         }
 
-
         .foodCard > span {
           font-size: 40px;
         }
 
-
         .foodCard small {
           display: block;
-
           font-size: 8px;
-
           letter-spacing: 3px;
-
           color: #96683c;
-
           font-weight: 800;
-
           margin-top: 35px;
         }
 
-
         .foodCard h3 {
           font-family: Georgia, serif;
-
           font-weight: 400;
-
           font-size: 34px;
-
           margin: 8px 0;
         }
 
-
         .foodCard p {
           margin: 0;
-
           color: #777067;
-
           font-size: 13px;
         }
 
-
-        /* =========================
-           SUMMARY
-        ========================== */
+        /* SUMMARY */
 
         .summary {
           background: #d7b183;
-
           padding: 120px 8vw;
-
           text-align: center;
         }
 
-
         .summaryInner {
           max-width: 900px;
-
           margin: auto;
         }
 
-
         .summary h2 {
           font-family: Georgia, serif;
-
-          font-size: clamp(50px, 8vw, 110px);
-
+          font-size: clamp(50px,8vw,110px);
           font-weight: 400;
-
           letter-spacing: -6px;
-
           margin: 0;
         }
-
 
         .summary h2 span {
           color: #704b2e;
         }
 
-
         .summaryText {
           max-width: 700px;
-
           margin: 30px auto;
-
           line-height: 1.8;
-
           font-size: 14px;
-
           color: #634b37;
         }
 
-
         .summaryButton {
           display: inline-block;
-
           padding: 15px 25px;
-
           background: #1d1b19;
-
           color: white;
-
           text-decoration: none;
-
           font-size: 11px;
-
           letter-spacing: 1px;
-
           text-transform: uppercase;
-
           transition: 0.3s;
         }
-
 
         .summaryButton:hover {
           transform: translateY(-3px);
         }
 
-
-        /* =========================
-           FINAL
-        ========================== */
+        /* FINAL */
 
         .final {
           position: relative;
-
           min-height: 750px;
-
           padding: 130px 20px;
-
           background: #1b1917;
-
           color: white;
-
           text-align: center;
-
           display: flex;
-
           flex-direction: column;
-
           justify-content: center;
-
           align-items: center;
-
           overflow: hidden;
         }
 
-
         .finalGlow {
           position: absolute;
-
           width: 600px;
-
           height: 600px;
-
           border-radius: 50%;
-
           background:
             radial-gradient(
               circle,
-              rgba(238, 166, 84, 0.18),
+              rgba(238,166,84,0.18),
               transparent 65%
             );
         }
 
-
         .final > *:not(.finalGlow) {
           position: relative;
-
           z-index: 1;
         }
 
-
         .final h2 {
           font-family: Georgia, serif;
-
           font-weight: 400;
-
-          font-size: clamp(70px, 10vw, 140px);
-
+          font-size: clamp(70px,10vw,140px);
           line-height: 0.8;
-
           letter-spacing: -7px;
-
           margin: 10px 0 35px;
         }
-
 
         .final h2 span {
           color: #f0ae5a;
         }
 
-
         .heart {
           color: #f0ae5a;
-
           font-size: 35px;
-
           margin: 10px 0 25px;
-
-          animation: heartbeat 1.6s infinite;
+          animation: heartBeat 1.6s infinite;
         }
-
-
-        @keyframes heartbeat {
-
-          0%,
-          100% {
-            transform: scale(1);
-          }
-
-          15% {
-            transform: scale(1.15);
-          }
-
-          30% {
-            transform: scale(1);
-          }
-
-        }
-
 
         .finalMessage {
           font-family: Georgia, serif;
-
           font-size: 18px;
-
           line-height: 1.8;
-
           color: #c8c1b9;
         }
 
-
         .signature {
           margin-top: 25px;
-
           color: #f0ae5a;
-
           font-family: Georgia, serif;
-
           font-style: italic;
         }
 
-
-        /* =========================
-           FOOTER
-        ========================== */
-
         footer {
           background: #11100f;
-
           color: #706b65;
-
           padding: 25px 5vw;
-
           display: flex;
-
           justify-content: space-between;
-
           font-size: 8px;
-
           letter-spacing: 3px;
         }
 
+        /* TABLET */
 
-        /* =========================
-           TABLET
-        ========================== */
-
-        @media (max-width: 900px) {
+        @media (max-width:900px) {
 
           .topActions {
-            gap: 6px;
+            gap:6px;
           }
 
           .contactButton {
-            padding: 10px 12px;
+            padding:10px 12px;
           }
 
           .navButton {
-            padding: 10px 13px;
+            padding:10px 13px;
           }
 
           .intro {
-            grid-template-columns: 1fr;
+            grid-template-columns:1fr;
           }
 
           .foodCards {
-            grid-template-columns: 1fr;
-          }
-
-          .sectionHeading {
-            flex-wrap: wrap;
+            grid-template-columns:1fr;
           }
 
         }
 
+        /* MOBILE */
 
-        /* =========================
-           MOBILE
-        ========================== */
-
-        @media (max-width: 800px) {
+        @media (max-width:800px) {
 
           .nav {
-            padding: 20px 5vw;
-
-            align-items: flex-start;
+            padding:20px 5vw;
+            align-items:flex-start;
           }
-
 
           .topActions {
-            flex-wrap: wrap;
-
-            justify-content: flex-end;
+            flex-wrap:wrap;
+            justify-content:flex-end;
           }
-
 
           .navButton {
-            display: none;
+            display:none;
           }
-
 
           .contactButton span {
-            display: none;
+            display:none;
           }
-
 
           .contactButton {
-            width: 40px;
-            height: 40px;
-
-            padding: 0;
-
-            justify-content: center;
-
-            border-radius: 50%;
-
-            font-size: 17px;
+            width:40px;
+            height:40px;
+            padding:0;
+            justify-content:center;
+            border-radius:50%;
+            font-size:17px;
           }
-
 
           .heroContent {
-            padding: 5vh 7vw;
+            padding:5vh 7vw;
           }
-
 
           .hero h1 {
-            font-size: 70px;
-
-            letter-spacing: -4px;
+            font-size:70px;
+            letter-spacing:-4px;
           }
-
 
           .heroBottom {
-            display: none;
+            display:none;
           }
-
 
           .intro {
-            grid-template-columns: 1fr;
-
-            padding: 90px 7vw;
+            grid-template-columns:1fr;
+            padding:90px 7vw;
           }
-
 
           .itinerary {
-            padding: 90px 5vw;
+            padding:90px 5vw;
           }
-
 
           .sectionHeading {
-            display: block;
-
-            margin-bottom: 60px;
+            display:block;
+            margin-bottom:60px;
           }
-
-
-          .progressBox {
-            max-width: 200px;
-
-            margin: 30px 0;
-          }
-
 
           .sectionDescription {
-            margin-top: 25px;
+            margin-top:25px;
           }
-
 
           .timelineLine {
-            left: 20px;
+            left:20px;
           }
-
 
           .timelineItem {
-            grid-template-columns:
-              40px
-              1fr;
-
-            gap: 15px;
+            grid-template-columns:40px 1fr;
+            gap:15px;
           }
-
 
           .timelineDot {
-            grid-column: 1;
-
-            grid-row: 1;
-
-            width: 40px;
-
-            height: 40px;
+            grid-column:1;
+            grid-row:1;
+            width:40px;
+            height:40px;
           }
-
 
           .time {
-            grid-column: 2;
-
-            grid-row: 1;
-
-            text-align: left;
-
-            padding-top: 0;
-
-            margin-left: 0;
-
-            min-height: 40px;
-
-            display: flex;
-
-            flex-direction: column;
-
-            justify-content: center;
+            grid-column:2;
+            grid-row:1;
+            text-align:left;
+            padding-top:0;
+            margin-left:0;
+            min-height:40px;
+            display:flex;
+            flex-direction:column;
+            justify-content:center;
           }
-
 
           .placeCard {
-            grid-column: 2;
-
-            margin-top: -5px;
-
-            padding: 25px;
+            grid-column:2;
+            margin-top:-5px;
+            padding:25px;
           }
-
 
           .placeCard h3 {
-            font-size: 30px;
+            font-size:30px;
           }
-
 
           .visualSection {
-            grid-template-columns: 1fr;
+            grid-template-columns:1fr;
           }
-
 
           .visualImage {
-            min-height: 400px;
+            min-height:400px;
           }
-
 
           .visualContent {
-            padding: 80px 8vw;
+            padding:80px 8vw;
           }
-
 
           .foodSection {
-            padding: 90px 7vw;
+            padding:90px 7vw;
           }
-
 
           .foodCards {
-            grid-template-columns: 1fr;
+            grid-template-columns:1fr;
           }
-
 
           .foodCard {
-            min-height: 220px;
+            min-height:220px;
           }
-
 
           .summary {
-            padding: 90px 7vw;
+            padding:90px 7vw;
           }
-
 
           .summary h2 {
-            letter-spacing: -3px;
+            letter-spacing:-3px;
           }
-
 
           .final {
-            min-height: 650px;
+            min-height:650px;
           }
-
 
           .final h2 {
-            letter-spacing: -4px;
+            letter-spacing:-4px;
           }
 
-
           footer {
-            flex-direction: column;
-
-            gap: 12px;
-
-            text-align: center;
+            flex-direction:column;
+            gap:12px;
+            text-align:center;
           }
 
         }
 
+        /* SMALL MOBILE */
 
-        /* =========================
-           SMALL MOBILE
-        ========================== */
-
-        @media (max-width: 450px) {
+        @media (max-width:450px) {
 
           .logo {
-            font-size: 11px;
-            letter-spacing: 2px;
+            font-size:11px;
+            letter-spacing:2px;
           }
-
 
           .nav {
-            padding: 18px 4vw;
+            padding:18px 4vw;
           }
-
 
           .hero h1 {
-            font-size: 62px;
+            font-size:62px;
           }
-
 
           .dedication {
-            font-size: 25px;
+            font-size:25px;
           }
-
 
           .heroText {
-            font-size: 14px;
+            font-size:14px;
           }
-
 
           .placeCard h3 {
-            font-size: 26px;
+            font-size:26px;
           }
-
 
           .ticketButton {
-            width: 100%;
+            width:100%;
           }
-
 
           .ticketBox {
-            padding: 10px;
+            padding:10px;
           }
-
 
           .ticketTitle {
-            font-size: 9px;
+            font-size:9px;
           }
-
 
           .finalMessage {
-            font-size: 16px;
+            font-size:16px;
           }
 
-
-          .completeDayArea {
-            padding: 45px 20px;
+          .celebrationMessage {
+            width:85%;
+            padding:30px 20px;
           }
 
-
-          .completeDayArea h3 {
-            font-size: 30px;
-          }
-
-
-          .finishButton {
-            width: 100%;
-          }
-
-
-          .celebrationBox {
-            padding: 50px 20px;
-          }
-
-
-          .celebrationBox h2 {
-            font-size: 45px;
+          .celebrationMessage h2 {
+            font-size:38px;
           }
 
         }
