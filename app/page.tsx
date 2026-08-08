@@ -17,7 +17,6 @@ const places = [
     map: "",
     type: "start",
   },
-
   {
     time: "5:30 AM",
     period: "SUNRISE",
@@ -31,7 +30,6 @@ const places = [
     map: "https://maps.app.goo.gl/Z9YDKLT4ZVTs8Mjq5",
     type: "beach",
   },
-
   {
     time: "7:30 – 8:00 AM",
     period: "BREAKFAST",
@@ -45,7 +43,6 @@ const places = [
     map: "https://share.google/oTCt8THkO92TRlVOg",
     type: "food",
   },
-
   {
     time: "9:30 – 10:00 AM",
     period: "EXPERIENCE",
@@ -54,12 +51,10 @@ const places = [
     emoji: "🐠",
     description:
       "Explore marine life and enjoy an amazing underwater experience at VGP Marine Kingdom.",
-    address:
-      "SH 49, Injambakkam, Chennai, Tamil Nadu 600115",
+    address: "SH 49, Injambakkam, Chennai, Tamil Nadu 600115",
     map: "https://maps.app.goo.gl/Jo9AprxjLDgZJWVXA",
     type: "experience",
   },
-
   {
     time: "1:00 PM",
     period: "LUNCH",
@@ -68,12 +63,10 @@ const places = [
     emoji: "🍛",
     description:
       "Take a break from exploring and enjoy lunch at Zaitoon Restaurant on ECR.",
-    address:
-      "East Coast Road (ECR), Chennai, Tamil Nadu",
+    address: "East Coast Road (ECR), Chennai, Tamil Nadu",
     map: "https://maps.app.goo.gl/husbvb7wJH8aiMgA8",
     type: "food",
   },
-
   {
     time: "AFTER LUNCH",
     period: "RELAX",
@@ -82,12 +75,10 @@ const places = [
     emoji: "🏖️",
     description:
       "Relax by the sea, enjoy the beach and spend some peaceful time together after lunch.",
-    address:
-      "Injambakkam, Chennai, Tamil Nadu 600115",
+    address: "Injambakkam, Chennai, Tamil Nadu 600115",
     map: "https://maps.app.goo.gl/QXNqiX4HnXW86L648",
     type: "beach",
   },
-
   {
     time: "4:00 – 5:00 PM",
     period: "SUNSET",
@@ -96,12 +87,10 @@ const places = [
     emoji: "🌇",
     description:
       "Slow down, enjoy the sea breeze and watch the beautiful sunset at Besant Nagar Beach.",
-    address:
-      "Besant Nagar, Chennai, Tamil Nadu 600090",
+    address: "Besant Nagar, Chennai, Tamil Nadu 600090",
     map: "https://share.google/uErgC5K1nRVaIar3q",
     type: "beach",
   },
-
   {
     time: "EVENING",
     period: "DINNER",
@@ -110,8 +99,7 @@ const places = [
     emoji: "🍜",
     description:
       "Finish the day with delicious ramen and a relaxed dinner at TAMEN – The Local Ramen.",
-    address:
-      "Besant Nagar, Chennai, Tamil Nadu 600090",
+    address: "Besant Nagar, Chennai, Tamil Nadu 600090",
     map: "https://maps.app.goo.gl/qRq7XudWZjQ5ZHh49",
     type: "food",
   },
@@ -120,6 +108,7 @@ const places = [
 export default function Page() {
   const [selected, setSelected] = useState<number | null>(null);
   const [showTicket, setShowTicket] = useState(false);
+  const [showCrackers, setShowCrackers] = useState(false);
 
   return (
     <main className="site">
@@ -129,20 +118,14 @@ export default function Page() {
       ========================== */}
 
       <section className="hero">
-
         <div className="heroOverlay" />
 
-        {/* TOP NAV */}
-
         <nav className="nav">
-
           <div className="logo">
             CHENNAI<span>•</span>DAY
           </div>
 
           <div className="topActions">
-
-            {/* CALL */}
 
             <a
               href={`tel:${PHONE}`}
@@ -150,8 +133,6 @@ export default function Page() {
             >
               📞 <span>Call Me</span>
             </a>
-
-            {/* WHATSAPP */}
 
             <a
               href={`https://wa.me/${PHONE}`}
@@ -170,11 +151,7 @@ export default function Page() {
             </a>
 
           </div>
-
         </nav>
-
-
-        {/* HERO CONTENT */}
 
         <div className="heroContent">
 
@@ -211,19 +188,10 @@ export default function Page() {
 
         </div>
 
-
         <div className="heroBottom">
-
-          <span>
-            CHENNAI, INDIA
-          </span>
-
-          <span>
-            ONE BEAUTIFUL DAY
-          </span>
-
+          <span>CHENNAI, INDIA</span>
+          <span>ONE BEAUTIFUL DAY</span>
         </div>
-
       </section>
 
 
@@ -301,35 +269,27 @@ export default function Page() {
               key={place.title}
             >
 
-              {/* NUMBER */}
-
               <div className="timelineDot">
-
                 <span>
                   {index + 1}
                 </span>
-
               </div>
 
 
-              {/* TIME */}
-
               <div className="time">
-
                 {place.time}
 
                 <small>
                   {place.period}
                 </small>
-
               </div>
 
 
-              {/* CARD */}
-
               <div
                 className={`placeCard ${place.type} ${
-                  selected === index ? "activeCard" : ""
+                  selected === index
+                    ? "activeCard"
+                    : ""
                 }`}
                 onClick={() =>
                   setSelected(
@@ -371,8 +331,6 @@ export default function Page() {
                   </p>
 
 
-                  {/* ADDRESS */}
-
                   {place.address && (
 
                     <div className="address">
@@ -389,8 +347,6 @@ export default function Page() {
 
                   )}
 
-
-                  {/* MAP */}
 
                   {place.map && (
 
@@ -409,9 +365,7 @@ export default function Page() {
                   )}
 
 
-                  {/* =========================
-                      VGP TICKET
-                  ========================== */}
+                  {/* VGP TICKET */}
 
                   {place.title ===
                     "VGP Marine Kingdom" && (
@@ -696,7 +650,132 @@ export default function Page() {
           — With love
         </p>
 
+
+        {/* =========================
+            DONE BUTTON
+        ========================== */}
+
+        <button
+          type="button"
+          className="doneButton"
+          onClick={() => setShowCrackers(true)}
+        >
+          DONE 🎉
+        </button>
+
       </section>
+
+
+      {/* =========================
+          FIREWORKS / CRACKERS
+      ========================== */}
+
+      {showCrackers && (
+
+        <div className="crackerOverlay">
+
+          {/* FIREWORK 1 */}
+
+          <div className="firework fireworkOne">
+
+            <span>✦</span>
+            <span>✦</span>
+            <span>✦</span>
+            <span>✦</span>
+            <span>✦</span>
+            <span>✦</span>
+            <span>✦</span>
+            <span>✦</span>
+
+          </div>
+
+
+          {/* FIREWORK 2 */}
+
+          <div className="firework fireworkTwo">
+
+            <span>✦</span>
+            <span>✦</span>
+            <span>✦</span>
+            <span>✦</span>
+            <span>✦</span>
+            <span>✦</span>
+            <span>✦</span>
+            <span>✦</span>
+
+          </div>
+
+
+          {/* FIREWORK 3 */}
+
+          <div className="firework fireworkThree">
+
+            <span>✦</span>
+            <span>✦</span>
+            <span>✦</span>
+            <span>✦</span>
+            <span>✦</span>
+            <span>✦</span>
+            <span>✦</span>
+            <span>✦</span>
+
+          </div>
+
+
+          {/* FIREWORK 4 */}
+
+          <div className="firework fireworkFour">
+
+            <span>✦</span>
+            <span>✦</span>
+            <span>✦</span>
+            <span>✦</span>
+            <span>✦</span>
+            <span>✦</span>
+            <span>✦</span>
+            <span>✦</span>
+
+          </div>
+
+
+          {/* CENTER MESSAGE */}
+
+          <div className="crackerMessage">
+
+            <div className="celebrationEmoji">
+              🎉
+            </div>
+
+            <div className="celebrationEmoji secondEmoji">
+              🎆
+            </div>
+
+            <h2>
+              DAY COMPLETE!
+            </h2>
+
+            <p>
+              Chennai memories unlocked ❤️
+            </p>
+
+            <div className="celebrationLine">
+              ✨ ✨ ✨
+            </div>
+
+            <button
+              type="button"
+              onClick={() =>
+                setShowCrackers(false)
+              }
+            >
+              CONTINUE
+            </button>
+
+          </div>
+
+        </div>
+
+      )}
 
 
       {/* =========================
@@ -740,6 +819,7 @@ export default function Page() {
           color: #191817;
           min-height: 100vh;
           overflow: hidden;
+
           font-family:
             Arial,
             Helvetica,
@@ -753,6 +833,7 @@ export default function Page() {
 
         .hero {
           min-height: 100vh;
+
           position: relative;
 
           display: flex;
@@ -776,6 +857,7 @@ export default function Page() {
 
         .heroOverlay {
           position: absolute;
+
           inset: 0;
 
           background:
@@ -800,6 +882,7 @@ export default function Page() {
           padding: 28px 5vw;
 
           display: flex;
+
           justify-content: space-between;
           align-items: center;
 
@@ -809,7 +892,9 @@ export default function Page() {
 
         .logo {
           font-size: 14px;
+
           font-weight: 800;
+
           letter-spacing: 3px;
 
           white-space: nowrap;
@@ -818,20 +903,27 @@ export default function Page() {
 
         .logo span {
           color: #f6b45c;
+
           padding: 0 5px;
         }
 
 
         .topActions {
           display: flex;
+
           align-items: center;
+
           gap: 10px;
         }
 
 
         .contactButton {
           display: inline-flex;
+
           align-items: center;
+
+          justify-content: center;
+
           gap: 7px;
 
           text-decoration: none;
@@ -841,6 +933,7 @@ export default function Page() {
           border-radius: 30px;
 
           font-size: 12px;
+
           font-weight: 700;
 
           transition: 0.3s;
@@ -851,14 +944,18 @@ export default function Page() {
 
         .callButton {
           background: rgba(255,255,255,0.14);
+
           border: 1px solid rgba(255,255,255,0.35);
+
           color: white;
         }
 
 
         .whatsappButton {
           background: #25d366;
+
           border: 1px solid #25d366;
+
           color: white;
         }
 
@@ -870,6 +967,7 @@ export default function Page() {
 
         .callButton:hover {
           background: white;
+
           color: #191817;
         }
 
@@ -900,6 +998,7 @@ export default function Page() {
 
         .navButton:hover {
           background: white;
+
           color: black;
         }
 
@@ -910,6 +1009,7 @@ export default function Page() {
 
         .heroContent {
           position: relative;
+
           z-index: 2;
 
           padding: 8vh 9vw;
@@ -920,7 +1020,9 @@ export default function Page() {
 
         .eyebrow {
           font-size: 11px;
+
           letter-spacing: 4px;
+
           font-weight: 700;
 
           margin: 0 0 20px;
@@ -949,6 +1051,7 @@ export default function Page() {
 
         .heroLine {
           width: 90px;
+
           height: 2px;
 
           background: #f7b55d;
@@ -1021,6 +1124,7 @@ export default function Page() {
 
         .heroBottom {
           position: relative;
+
           z-index: 2;
 
           padding: 25px 5vw;
@@ -1937,6 +2041,421 @@ export default function Page() {
 
 
         /* =========================
+           DONE BUTTON
+        ========================== */
+
+        .doneButton {
+          margin-top: 35px;
+
+          padding: 17px 45px;
+
+          border: 1px solid #f0ae5a;
+
+          background: #f0ae5a;
+
+          color: #1b1917;
+
+          font-size: 12px;
+
+          font-weight: 900;
+
+          letter-spacing: 3px;
+
+          cursor: pointer;
+
+          text-transform: uppercase;
+
+          transition:
+            transform 0.3s,
+            box-shadow 0.3s;
+        }
+
+
+        .doneButton:hover {
+          transform: scale(1.08);
+
+          box-shadow:
+            0 0 30px rgba(240, 174, 90, 0.6);
+        }
+
+
+        .doneButton:active {
+          transform: scale(0.96);
+        }
+
+
+        /* =========================
+           CRACKER OVERLAY
+        ========================== */
+
+        .crackerOverlay {
+          position: fixed;
+
+          inset: 0;
+
+          z-index: 99999;
+
+          background:
+            radial-gradient(
+              circle at center,
+              #302116 0%,
+              #120f0c 45%,
+              #050505 100%
+            );
+
+          display: flex;
+
+          justify-content: center;
+
+          align-items: center;
+
+          overflow: hidden;
+
+          animation: overlayAppear 0.5s ease-out;
+        }
+
+
+        @keyframes overlayAppear {
+
+          from {
+            opacity: 0;
+          }
+
+          to {
+            opacity: 1;
+          }
+
+        }
+
+
+        /* =========================
+           FIREWORKS
+        ========================== */
+
+        .firework {
+          position: absolute;
+
+          width: 10px;
+
+          height: 10px;
+
+          border-radius: 50%;
+
+          animation:
+            fireworkAppear 2.2s ease-out infinite;
+        }
+
+
+        .firework span {
+          position: absolute;
+
+          left: 0;
+
+          top: 0;
+
+          font-size: 35px;
+
+          color: #f7b55d;
+
+          text-shadow:
+            0 0 8px #fff,
+            0 0 20px #f7b55d,
+            0 0 40px #f7b55d;
+
+          transform-origin: 5px 5px;
+        }
+
+
+        .firework span:nth-child(1) {
+          transform: translate(-5px, -85px);
+        }
+
+
+        .firework span:nth-child(2) {
+          transform: translate(55px, -55px);
+        }
+
+
+        .firework span:nth-child(3) {
+          transform: translate(85px, -5px);
+        }
+
+
+        .firework span:nth-child(4) {
+          transform: translate(55px, 50px);
+        }
+
+
+        .firework span:nth-child(5) {
+          transform: translate(-5px, 80px);
+        }
+
+
+        .firework span:nth-child(6) {
+          transform: translate(-60px, 50px);
+        }
+
+
+        .firework span:nth-child(7) {
+          transform: translate(-90px, -5px);
+        }
+
+
+        .firework span:nth-child(8) {
+          transform: translate(-60px, -55px);
+        }
+
+
+        .fireworkOne {
+          top: 17%;
+
+          left: 14%;
+
+          animation-delay: 0s;
+        }
+
+
+        .fireworkTwo {
+          top: 20%;
+
+          right: 14%;
+
+          animation-delay: 0.6s;
+
+          transform: scale(0.8);
+        }
+
+
+        .fireworkThree {
+          bottom: 15%;
+
+          left: 20%;
+
+          animation-delay: 1s;
+
+          transform: scale(0.7);
+        }
+
+
+        .fireworkFour {
+          bottom: 17%;
+
+          right: 20%;
+
+          animation-delay: 1.4s;
+
+          transform: scale(0.9);
+        }
+
+
+        @keyframes fireworkAppear {
+
+          0% {
+            opacity: 0;
+
+            transform:
+              scale(0.1)
+              rotate(0deg);
+          }
+
+          15% {
+            opacity: 1;
+          }
+
+          45% {
+            opacity: 1;
+
+            transform:
+              scale(1)
+              rotate(20deg);
+          }
+
+          70% {
+            opacity: 0.7;
+          }
+
+          100% {
+            opacity: 0;
+
+            transform:
+              scale(0.7)
+              rotate(45deg);
+          }
+
+        }
+
+
+        /* =========================
+           CELEBRATION MESSAGE
+        ========================== */
+
+        .crackerMessage {
+          position: relative;
+
+          z-index: 10;
+
+          text-align: center;
+
+          animation:
+            celebrationPop
+            0.8s
+            cubic-bezier(0.2, 1.5, 0.5, 1);
+        }
+
+
+        @keyframes celebrationPop {
+
+          0% {
+            opacity: 0;
+
+            transform:
+              scale(0.3)
+              translateY(40px);
+          }
+
+          70% {
+            transform:
+              scale(1.08)
+              translateY(-5px);
+          }
+
+          100% {
+            opacity: 1;
+
+            transform:
+              scale(1)
+              translateY(0);
+          }
+
+        }
+
+
+        .celebrationEmoji {
+          font-size: 80px;
+
+          margin-bottom: 10px;
+
+          animation:
+            celebrationBounce
+            1.4s
+            infinite;
+        }
+
+
+        .secondEmoji {
+          display: none;
+        }
+
+
+        @keyframes celebrationBounce {
+
+          0%,
+          100% {
+            transform: translateY(0) rotate(0);
+          }
+
+          50% {
+            transform:
+              translateY(-12px)
+              rotate(5deg);
+          }
+
+        }
+
+
+        .crackerMessage h2 {
+          font-family: Georgia, serif;
+
+          color: #f0ae5a;
+
+          font-size:
+            clamp(45px, 8vw, 100px);
+
+          line-height: 0.9;
+
+          letter-spacing: -5px;
+
+          margin: 0;
+        }
+
+
+        .crackerMessage p {
+          color: #d8d0c7;
+
+          font-family: Georgia, serif;
+
+          font-size: 20px;
+
+          margin: 25px 0 15px;
+        }
+
+
+        .celebrationLine {
+          color: #f7b55d;
+
+          font-size: 20px;
+
+          letter-spacing: 10px;
+
+          margin: 15px 0 30px;
+
+          animation:
+            sparkle
+            1s
+            infinite alternate;
+        }
+
+
+        @keyframes sparkle {
+
+          from {
+            opacity: 0.4;
+
+            transform: scale(0.95);
+          }
+
+          to {
+            opacity: 1;
+
+            transform: scale(1.05);
+          }
+
+        }
+
+
+        .crackerMessage button {
+          padding: 14px 30px;
+
+          background: transparent;
+
+          border: 1px solid #f0ae5a;
+
+          color: #f0ae5a;
+
+          cursor: pointer;
+
+          text-transform: uppercase;
+
+          letter-spacing: 2px;
+
+          font-size: 10px;
+
+          font-weight: 800;
+
+          transition: 0.3s;
+        }
+
+
+        .crackerMessage button:hover {
+          background: #f0ae5a;
+
+          color: #1b1917;
+
+          transform: translateY(-3px);
+        }
+
+
+        /* =========================
            FOOTER
         ========================== */
 
@@ -1967,17 +2486,21 @@ export default function Page() {
             gap: 6px;
           }
 
+
           .contactButton {
             padding: 10px 12px;
           }
+
 
           .navButton {
             padding: 10px 13px;
           }
 
+
           .intro {
             grid-template-columns: 1fr;
           }
+
 
           .foodCards {
             grid-template-columns: 1fr;
@@ -2018,6 +2541,7 @@ export default function Page() {
 
           .contactButton {
             width: 40px;
+
             height: 40px;
 
             padding: 0;
@@ -2105,8 +2629,6 @@ export default function Page() {
 
             padding-top: 0;
 
-            margin-left: 0;
-
             min-height: 40px;
 
             display: flex;
@@ -2181,6 +2703,51 @@ export default function Page() {
           }
 
 
+          .crackerMessage {
+            width: 90%;
+          }
+
+
+          .crackerMessage h2 {
+            font-size: 52px;
+
+            letter-spacing: -3px;
+          }
+
+
+          .crackerMessage p {
+            font-size: 17px;
+          }
+
+
+          .fireworkOne {
+            left: 8%;
+
+            top: 15%;
+          }
+
+
+          .fireworkTwo {
+            right: 8%;
+
+            top: 15%;
+          }
+
+
+          .fireworkThree {
+            left: 8%;
+
+            bottom: 15%;
+          }
+
+
+          .fireworkFour {
+            right: 8%;
+
+            bottom: 15%;
+          }
+
+
           footer {
             flex-direction: column;
 
@@ -2200,6 +2767,7 @@ export default function Page() {
 
           .logo {
             font-size: 11px;
+
             letter-spacing: 2px;
           }
 
@@ -2246,6 +2814,75 @@ export default function Page() {
 
           .finalMessage {
             font-size: 16px;
+          }
+
+
+          .doneButton {
+            width: 80%;
+
+            max-width: 280px;
+          }
+
+
+          .crackerMessage h2 {
+            font-size: 43px;
+
+            letter-spacing: -2px;
+          }
+
+
+          .celebrationEmoji {
+            font-size: 65px;
+          }
+
+
+          .crackerMessage p {
+            font-size: 15px;
+          }
+
+
+          .firework span {
+            font-size: 25px;
+          }
+
+
+          .firework span:nth-child(1) {
+            transform: translate(-5px, -60px);
+          }
+
+
+          .firework span:nth-child(2) {
+            transform: translate(40px, -40px);
+          }
+
+
+          .firework span:nth-child(3) {
+            transform: translate(60px, -5px);
+          }
+
+
+          .firework span:nth-child(4) {
+            transform: translate(40px, 35px);
+          }
+
+
+          .firework span:nth-child(5) {
+            transform: translate(-5px, 55px);
+          }
+
+
+          .firework span:nth-child(6) {
+            transform: translate(-45px, 35px);
+          }
+
+
+          .firework span:nth-child(7) {
+            transform: translate(-60px, -5px);
+          }
+
+
+          .firework span:nth-child(8) {
+            transform: translate(-45px, -40px);
           }
 
         }
