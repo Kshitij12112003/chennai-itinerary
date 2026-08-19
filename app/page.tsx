@@ -106,11 +106,17 @@ const places = [
 
 export default function Page() {
   const [selected, setSelected] = useState<number | null>(null);
+
   const [showTicket, setShowTicket] = useState(false);
+
   const [completed, setCompleted] = useState<number[]>([]);
+
   const [celebration, setCelebration] = useState(false);
 
+  const [surprise, setSurprise] = useState(false);
+
   const completedCount = completed.length;
+
   const allCompleted = completedCount === places.length;
 
   /*
@@ -123,15 +129,17 @@ export default function Page() {
       setCompleted((prev) =>
         prev.filter((item) => item !== index)
       );
+
       return;
     }
 
     setCompleted((prev) => [...prev, index]);
+
     smallCelebration();
   };
 
   /*
-   * SMALL CONFETTI EFFECT
+   * SMALL CELEBRATION
    */
   const smallCelebration = () => {
     const amount = 35;
@@ -213,12 +221,13 @@ export default function Page() {
   };
 
   /*
-   * ESC CLOSES CELEBRATION
+   * ESCAPE CLOSES POPUPS
    */
   useEffect(() => {
     const handleKey = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
         setCelebration(false);
+        setSurprise(false);
       }
     };
 
@@ -251,7 +260,6 @@ export default function Page() {
             <a
               href={`tel:${PHONE}`}
               className="contactButton callButton"
-              aria-label="Call me"
             >
               📞 <span>Call Me</span>
             </a>
@@ -261,7 +269,6 @@ export default function Page() {
               target="_blank"
               rel="noopener noreferrer"
               className="contactButton whatsappButton"
-              aria-label="WhatsApp"
             >
               💬 <span>WhatsApp</span>
             </a>
@@ -296,25 +303,35 @@ export default function Page() {
           </p>
 
           <p className="heroText">
-            Aaj ka din tumhara hai — aur ye din kabhi wapas nahi aayega.
-            <br />
-            Toh sab kuch bhool jao, saari tension chhod do,
-            <br />
-            aur is din ka har ek pal dil khol kar enjoy karo. ❤️✨
+            Aaj ka din tumhara hai — aur ye din kabhi wapas
+            nahi aayega. Toh sab kuch bhool jao, saari
+            tension chhod do, aur is din ka har ek pal
+            dil khol kar enjoy karo. ❤️✨
             <br />
             <br />
             Aur haan, mujhpar gussa nahi karna…
-            <br />
             aaj ke din bilkul bhi nahi. 😂
           </p>
 
-          <a
-            href="#itinerary"
-            className="startButton"
-          >
-            <span>Start our journey</span>
-            <strong>↓</strong>
-          </a>
+          <div className="heroButtons">
+
+            <a
+              href="#itinerary"
+              className="startButton"
+            >
+              <span>Start our journey</span>
+              <strong>↓</strong>
+            </a>
+
+            <button
+              type="button"
+              className="surpriseButton"
+              onClick={() => setSurprise(true)}
+            >
+              💌 A little surprise
+            </button>
+
+          </div>
 
         </div>
 
@@ -351,36 +368,33 @@ export default function Page() {
             <em>Many memories.</em>
           </h2>
 
-          <div className="oceanMessage">
+          <p className="introMessage">
 
-            <p className="oceanOpening">
-              Tum aur samudra mein ek similarity hai,
-              according to me… 🌊❤️
-            </p>
+            Tum aur samudra mein ek similarity hai,
+            according to me… 🌊❤️
 
-            <p>
-              Dono ko jitna dekho, utna hi mann karta hai
-              aur dekhte rahoon.
-            </p>
+            <br />
+            <br />
 
-            <p>
-              Dono ke saath waqt ka pata hi nahi chalta,
-              aur dono apne aap mein ek alag hi sukoon
-              rakhte hain. ✨
-            </p>
+            Dono ko jitna dekho, utna hi mann karta hai
+            aur dekhte rahoon. Dono ke saath waqt ka pata
+            hi nahi chalta, aur dono apne aap mein ek
+            alag hi sukoon rakhte hain. ✨
 
-            <p>
-              Uski lehron ki awaaz se kabhi bore nahi hota,
-              aur tumhari baaton se bhi nahi. ❤️
-            </p>
+            <br />
+            <br />
 
-            <p className="oceanEnding">
-              Bas ek similarity aur hai…
-              samudra ka paani kabhi-kabhi jalan deta hai,
-              aur tumhari harkatein bhi. 😂❤️
-            </p>
+            Uski lehron ki awaaz se kabhi bore nahi hota,
+            aur tumhari baaton se bhi nahi. ❤️
 
-          </div>
+            <br />
+            <br />
+
+            Bas ek similarity aur hai…
+            samudra ka paani kabhi-kabhi jalan deta hai,
+            aur tumhari harkatein bhi. 😂❤️
+
+          </p>
 
         </div>
 
@@ -421,6 +435,7 @@ export default function Page() {
             </small>
 
             <div className="progressBar">
+
               <div
                 className="progressFill"
                 style={{
@@ -429,6 +444,7 @@ export default function Page() {
                   }%`,
                 }}
               />
+
             </div>
 
           </div>
@@ -624,7 +640,7 @@ export default function Page() {
                     )}
 
 
-                    {/* COMPLETE BUTTON */}
+                    {/* COMPLETE */}
 
                     <button
                       type="button"
@@ -664,7 +680,9 @@ export default function Page() {
         </div>
 
 
-        {/* FINAL COMPLETE BUTTON */}
+        {/* =================================================
+            COMPLETE DAY
+        ================================================== */}
 
         {allCompleted && (
 
@@ -677,8 +695,16 @@ export default function Page() {
             </p>
 
             <h3>
-              All locations completed.
+              7 places. 1 day.
+              <br />
+              Countless memories.
             </h3>
+
+            <p className="completeDayText">
+              You reached the end of the itinerary…
+              <br />
+              but hopefully not the end of the memories. ❤️
+            </p>
 
             <button
               type="button"
@@ -716,10 +742,10 @@ export default function Page() {
           </h2>
 
           <p>
-            Poore din ghoomne ke baad, Besant Nagar Beach par
-            thoda theherna, samundar ki lehron ko dekhna aur
-            dheere-dheere badalte aasman ke rangon ko mehsoos
-            karna. 🌅🌊❤️
+            Poore din ghoomne ke baad, Besant Nagar Beach
+            par thoda theherna, samundar ki lehron ko dekhna
+            aur dheere-dheere badalte aasman ke rangon ko
+            mehsoos karna. 🌅🌊❤️
           </p>
 
           <div className="sunsetTime">
@@ -859,6 +885,11 @@ export default function Page() {
             TAMEN
           </p>
 
+          <p className="memoryCounter">
+            7 places · 1 beautiful day ·
+            countless memories ❤️
+          </p>
+
           <a
             href="https://www.google.com/maps"
             target="_blank"
@@ -896,22 +927,38 @@ export default function Page() {
         </div>
 
         <p className="finalMessage">
+
           Dear Disha,
           <br />
-          I just wanted to make your day a little more beautiful,
           <br />
-          fill it with a few smiles, some good memories,
+
+          I just wanted to make your day
+          a little more beautiful.
           <br />
-          and moments that stay with you a little longer.
+
+          Maybe I succeeded, maybe I didn’t —
+          but every little detail was planned
+          with a smile, just hoping I could give
+          you a day worth remembering. ❤️
           <br />
           <br />
-          I hope I succeeded — even if just a little.
+
+          So today, forget everything else.
+          No worries, no tension —
+          just enjoy the sea, the food,
+          the sunsets, the laughter,
+          and every little moment. ✨
           <br />
-          
+          <br />
+
+          And yes… please don't be angry with me today.
+          <br />
+          At least give me one day off. 😂❤️
+
         </p>
 
         <p className="signature">
-          — With love
+          — With love, always
         </p>
 
       </section>
@@ -935,6 +982,81 @@ export default function Page() {
 
 
       {/* =====================================================
+          LITTLE SURPRISE POPUP
+      ====================================================== */}
+
+      {surprise && (
+
+        <div
+          className="surpriseOverlay"
+          onClick={() => setSurprise(false)}
+        >
+
+          <div
+            className="surpriseBox"
+            onClick={(e) =>
+              e.stopPropagation()
+            }
+          >
+
+            <div className="surpriseHeart">
+              💌
+            </div>
+
+            <p className="surpriseEyebrow">
+              A LITTLE NOTE FOR YOU
+            </p>
+
+            <h2>
+              Just one
+              <br />
+              <span>little thing...</span>
+            </h2>
+
+            <div className="surpriseDivider" />
+
+            <p className="surpriseMessage">
+
+              Aaj ka din sirf places explore karne ke
+              liye nahi hai.
+
+              <br />
+              <br />
+
+              Thoda hasna hai, thoda pagal hona hai,
+              thoda mujhe irritate karna hai… 😂
+
+              <br />
+              <br />
+
+              Aur sabse important —
+              itni saari memories create karni hain
+              ki baad mein jab Chennai yaad aaye,
+              toh ye din bhi yaad aaye. ❤️
+
+              <br />
+              <br />
+
+              Bas tum enjoy karna.
+              Baaki sab main sambhal lunga. ✨
+
+            </p>
+
+            <button
+              type="button"
+              onClick={() => setSurprise(false)}
+            >
+              Okay… let's go ❤️
+            </button>
+
+          </div>
+
+        </div>
+
+      )}
+
+
+      {/* =====================================================
           BIG CELEBRATION POPUP
       ====================================================== */}
 
@@ -943,8 +1065,6 @@ export default function Page() {
         <div
           className="celebrationOverlay"
           onClick={() => setCelebration(false)}
-          role="dialog"
-          aria-modal="true"
         >
 
           <div
@@ -967,6 +1087,12 @@ export default function Page() {
               <br />
               <span>every moment count.</span>
             </h2>
+
+            <p className="celebrationSubtext">
+              7 places. One beautiful day.
+              <br />
+              And hopefully a lot of memories. ❤️
+            </p>
 
             <div className="celebrationHearts">
               ❤️ ✨ ❤️ ✨ ❤️
@@ -1178,7 +1304,7 @@ export default function Page() {
 
           padding: 8vh 9vw;
 
-          max-width: 900px;
+          max-width: 950px;
         }
 
 
@@ -1242,7 +1368,15 @@ export default function Page() {
 
           opacity: 0.9;
 
-          max-width: 700px;
+          max-width: 720px;
+        }
+
+
+        .heroButtons {
+          display: flex;
+          align-items: center;
+          flex-wrap: wrap;
+          gap: 12px;
         }
 
 
@@ -1282,6 +1416,38 @@ export default function Page() {
 
         .startButton strong {
           font-size: 18px;
+        }
+
+
+        .surpriseButton {
+          margin-top: 25px;
+
+          padding: 14px 19px;
+
+          border: 1px solid rgba(255,255,255,0.4);
+
+          background: rgba(255,255,255,0.08);
+
+          color: white;
+
+          font-size: 11px;
+
+          font-weight: 800;
+
+          letter-spacing: 1px;
+
+          cursor: pointer;
+
+          transition: 0.3s;
+
+          backdrop-filter: blur(5px);
+        }
+
+
+        .surpriseButton:hover {
+          background: white;
+          color: #191817;
+          transform: translateY(-3px);
         }
 
 
@@ -1345,7 +1511,7 @@ export default function Page() {
 
           letter-spacing: -4px;
 
-          margin: 0 0 35px;
+          margin: 0 0 30px;
         }
 
 
@@ -1354,41 +1520,14 @@ export default function Page() {
         }
 
 
-        .oceanMessage {
+        .introMessage {
           max-width: 650px;
-        }
 
-
-        .oceanMessage p {
-          font-size: 16px;
+          font-size: 17px;
 
           line-height: 1.85;
 
-          color: #6e685f;
-
-          margin: 0 0 18px;
-        }
-
-
-        .oceanMessage .oceanOpening {
-          color: #8b623b;
-
-          font-family: Georgia, serif;
-
-          font-size: 21px;
-
-          line-height: 1.5;
-
-          margin-bottom: 25px;
-        }
-
-
-        .oceanMessage .oceanEnding {
-          color: #594a3d;
-
-          font-weight: 600;
-
-          margin-top: 25px;
+          color: #5f5952;
         }
 
 
@@ -1993,6 +2132,7 @@ export default function Page() {
 
 
         @keyframes completeAppear {
+
           from {
             opacity: 0;
             transform: translateY(30px);
@@ -2002,10 +2142,11 @@ export default function Page() {
             opacity: 1;
             transform: translateY(0);
           }
+
         }
 
 
-        .completeDayArea > p {
+        .completeDayArea > p:first-child {
           margin: 0 0 10px;
 
           font-size: 10px;
@@ -2025,7 +2166,20 @@ export default function Page() {
 
           font-size: 38px;
 
-          margin: 0 0 30px;
+          margin: 0 0 20px;
+        }
+
+
+        .completeDayText {
+          color: #6f5b49;
+
+          line-height: 1.7;
+
+          font-family: Georgia, serif;
+
+          font-size: 16px;
+
+          margin-bottom: 30px;
         }
 
 
@@ -2137,7 +2291,7 @@ export default function Page() {
 
 
         /* =========================
-           CELEBRATION FLASH
+           FLASH
         ========================== */
 
         .celebrationFlash::before {
@@ -2183,6 +2337,159 @@ export default function Page() {
             opacity: 0;
           }
 
+        }
+
+
+        /* =========================
+           SURPRISE POPUP
+        ========================== */
+
+        .surpriseOverlay {
+          position: fixed;
+
+          inset: 0;
+
+          z-index: 100000;
+
+          background:
+            rgba(20,16,12,0.78);
+
+          backdrop-filter: blur(12px);
+
+          display: flex;
+
+          align-items: center;
+
+          justify-content: center;
+
+          padding: 25px;
+
+          animation: overlayAppear 0.4s ease;
+        }
+
+
+        .surpriseBox {
+          width: min(650px, 100%);
+
+          max-height: 90vh;
+
+          overflow-y: auto;
+
+          padding: 60px 40px;
+
+          text-align: center;
+
+          color: white;
+
+          background:
+            radial-gradient(
+              circle at top,
+              #59402a,
+              #211c17 70%
+            );
+
+          border: 1px solid #b98a58;
+
+          box-shadow:
+            0 30px 100px
+            rgba(0,0,0,0.5);
+
+          animation:
+            celebrationBoxAppear
+            0.7s
+            cubic-bezier(.17,.89,.32,1.28);
+        }
+
+
+        .surpriseHeart {
+          font-size: 60px;
+
+          margin-bottom: 15px;
+
+          animation: celebrationBounce 1.5s infinite;
+        }
+
+
+        .surpriseEyebrow {
+          font-size: 10px;
+
+          letter-spacing: 4px;
+
+          color: #e9b86d;
+
+          font-weight: 800;
+        }
+
+
+        .surpriseBox h2 {
+          font-family: Georgia, serif;
+
+          font-size: clamp(45px, 7vw, 70px);
+
+          line-height: 0.9;
+
+          font-weight: 400;
+
+          letter-spacing: -3px;
+
+          margin: 20px 0;
+        }
+
+
+        .surpriseBox h2 span {
+          color: #f0ae5a;
+        }
+
+
+        .surpriseDivider {
+          width: 60px;
+
+          height: 2px;
+
+          background: #d3a46d;
+
+          margin: 30px auto;
+        }
+
+
+        .surpriseMessage {
+          max-width: 480px;
+
+          margin: auto;
+
+          font-family: Georgia, serif;
+
+          font-size: 17px;
+
+          line-height: 1.8;
+
+          color: #ddd2c5;
+        }
+
+
+        .surpriseBox button {
+          margin-top: 35px;
+
+          border: 1px solid #d3a46d;
+
+          background: #d3a46d;
+
+          color: #211c17;
+
+          padding: 15px 30px;
+
+          font-weight: 800;
+
+          cursor: pointer;
+
+          transition: 0.3s;
+        }
+
+
+        .surpriseBox button:hover {
+          background: white;
+
+          border-color: white;
         }
 
 
@@ -2256,23 +2563,6 @@ export default function Page() {
         }
 
 
-        @keyframes celebrationBoxAppear {
-
-          from {
-            transform: scale(0.7);
-
-            opacity: 0;
-          }
-
-          to {
-            transform: scale(1);
-
-            opacity: 1;
-          }
-
-        }
-
-
         .celebrationEmoji {
           font-size: 70px;
 
@@ -2296,7 +2586,7 @@ export default function Page() {
         }
 
 
-        .celebrationBox > p {
+        .celebrationBox > p:first-of-type {
           font-size: 10px;
 
           letter-spacing: 4px;
@@ -2324,6 +2614,17 @@ export default function Page() {
 
         .celebrationBox h2 span {
           color: #f0ae5a;
+        }
+
+
+        .celebrationSubtext {
+          color: #d8cabe;
+
+          line-height: 1.7;
+
+          font-family: Georgia, serif;
+
+          font-size: 16px;
         }
 
 
@@ -2425,13 +2726,13 @@ export default function Page() {
 
 
         .visualContent > p {
-          max-width: 500px;
+          max-width: 450px;
 
-          line-height: 1.9;
+          line-height: 1.8;
 
           color: #c3bdb5;
 
-          font-size: 15px;
+          font-size: 14px;
         }
 
 
@@ -2615,13 +2916,24 @@ export default function Page() {
         .summaryText {
           max-width: 700px;
 
-          margin: 30px auto;
+          margin: 30px auto 15px;
 
           line-height: 1.8;
 
           font-size: 14px;
 
           color: #634b37;
+        }
+
+
+        .memoryCounter {
+          font-family: Georgia, serif;
+
+          font-size: 18px;
+
+          color: #704b2e;
+
+          margin: 25px 0 30px;
         }
 
 
@@ -2755,6 +3067,8 @@ export default function Page() {
 
 
         .finalMessage {
+          max-width: 700px;
+
           font-family: Georgia, serif;
 
           font-size: 18px;
@@ -2762,12 +3076,6 @@ export default function Page() {
           line-height: 1.8;
 
           color: #c8c1b9;
-
-          max-width: 800px;
-
-          margin-left: auto;
-
-          margin-right: auto;
         }
 
 
@@ -2779,6 +3087,8 @@ export default function Page() {
           font-family: Georgia, serif;
 
           font-style: italic;
+
+          font-size: 18px;
         }
 
 
@@ -2892,15 +3202,21 @@ export default function Page() {
           }
 
 
-          .heroText {
-            font-size: 14px;
-
-            line-height: 1.75;
+          .heroBottom {
+            display: none;
           }
 
 
-          .heroBottom {
-            display: none;
+          .heroButtons {
+            flex-direction: column;
+            align-items: stretch;
+          }
+
+
+          .startButton,
+          .surpriseButton {
+            justify-content: center;
+            width: 100%;
           }
 
 
@@ -2908,23 +3224,6 @@ export default function Page() {
             grid-template-columns: 1fr;
 
             padding: 90px 7vw;
-          }
-
-
-          .intro h2 {
-            margin-bottom: 35px;
-          }
-
-
-          .oceanMessage p {
-            font-size: 15px;
-
-            line-height: 1.8;
-          }
-
-
-          .oceanMessage .oceanOpening {
-            font-size: 19px;
           }
 
 
@@ -2985,8 +3284,6 @@ export default function Page() {
             text-align: left;
 
             padding-top: 0;
-
-            margin-left: 0;
 
             min-height: 40px;
 
@@ -3053,11 +3350,7 @@ export default function Page() {
 
 
           .final {
-            min-height: 700px;
-
-            padding-left: 7vw;
-
-            padding-right: 7vw;
+            min-height: 650px;
           }
 
 
@@ -3068,8 +3361,6 @@ export default function Page() {
 
           .finalMessage {
             font-size: 16px;
-
-            line-height: 1.8;
           }
 
 
@@ -3112,9 +3403,12 @@ export default function Page() {
 
 
           .heroText {
-            font-size: 13px;
+            font-size: 14px;
+          }
 
-            line-height: 1.8;
+
+          .introMessage {
+            font-size: 15px;
           }
 
 
@@ -3139,9 +3433,7 @@ export default function Page() {
 
 
           .finalMessage {
-            font-size: 15px;
-
-            line-height: 1.85;
+            font-size: 16px;
           }
 
 
@@ -3167,6 +3459,21 @@ export default function Page() {
 
           .celebrationBox h2 {
             font-size: 45px;
+          }
+
+
+          .surpriseBox {
+            padding: 45px 20px;
+          }
+
+
+          .surpriseBox h2 {
+            font-size: 45px;
+          }
+
+
+          .surpriseMessage {
+            font-size: 15px;
           }
 
         }
