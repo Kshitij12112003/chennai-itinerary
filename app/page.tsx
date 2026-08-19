@@ -9,15 +9,17 @@ const places = [
     time: "5:30 AM",
     period: "SUNRISE",
     title: "Marina Beach",
-    subtitle: "Watch the sunrise",
+    subtitle: "Start with the first light",
     emoji: "🌅",
     description:
-      "Start the day by watching the sunrise at Marina Beach and enjoy the peaceful morning by the sea.",
+      "Subah ki pehli roshni ke saath Marina Beach se din ki shuruaat. Thodi shaanti, thodi thandi hawa aur ek khoobsurat beginning.",
     address:
       "Kamarajar Salai, Marina Beach, Triplicane, Chennai, Tamil Nadu 600005",
     map: "https://maps.app.goo.gl/Z9YDKLT4ZVTs8Mjq5",
     type: "beach",
+    note: "Aaj alarm se zyada important hai sunrise. ❤️",
   },
+
   {
     time: "7:30 – 8:00 AM",
     period: "BREAKFAST",
@@ -25,12 +27,14 @@ const places = [
     subtitle: "Breakfast at Triplicane",
     emoji: "🍽️",
     description:
-      "Enjoy a delicious breakfast at the famous Ratna Cafe in Triplicane.",
+      "Sunrise ke baad ek proper South Indian breakfast. Aur haan, bina jaldi kiye — aaj ka din rush karne ke liye nahi hai.",
     address:
       "Ratna Cafe, Triplicane High Rd, Triplicane, Chennai, Tamil Nadu 600005",
     map: "https://share.google/oTCt8THkO92TRlVOg",
     type: "food",
+    note: "Pehle breakfast. Baaki duniya baad mein. 😂❤️",
   },
+
   {
     time: "9:30 – 10:00 AM",
     period: "EXPERIENCE",
@@ -38,12 +42,13 @@ const places = [
     subtitle: "Explore the underwater world",
     emoji: "🐠",
     description:
-      "Explore marine life and enjoy an amazing underwater experience at VGP Marine Kingdom.",
-    address:
-      "SH 49, Injambakkam, Chennai, Tamil Nadu 600115",
+      "Marine life ke beech thoda time spend karna aur ek aisi duniya dekhna jo hum roz nahi dekhte.",
+    address: "SH 49, Injambakkam, Chennai, Tamil Nadu 600115",
     map: "https://maps.app.goo.gl/Jo9AprxjLDgZJWVXA",
     type: "experience",
+    note: "Bas enjoy karna hai. Photos bhi, memories bhi. ✨",
   },
+
   {
     time: "1:00 PM",
     period: "LUNCH",
@@ -51,46 +56,53 @@ const places = [
     subtitle: "Lunch on ECR",
     emoji: "🍛",
     description:
-      "Take a break from exploring and enjoy lunch at Zaitoon Restaurant on ECR.",
+      "Subah ki exploring ke baad ek achha sa lunch. Thoda rest, thodi baatein aur phir adventure continues.",
     address: "East Coast Road (ECR), Chennai, Tamil Nadu",
     map: "https://maps.app.goo.gl/husbvb7wJH8aiMgA8",
     type: "food",
+    note: "Food ke maamle mein compromise allowed nahi hai. 😂",
   },
+
   {
     time: "AFTER LUNCH",
     period: "RELAX",
     title: "VGP Golden Beach",
-    subtitle: "Beach time",
+    subtitle: "Just slow down",
     emoji: "🏖️",
     description:
-      "Relax by the sea, enjoy the beach and spend some peaceful time together after lunch.",
+      "Lunch ke baad thoda beach time. No schedule pressure. Bas samundar, hawa aur thoda sa sukoon.",
     address: "Injambakkam, Chennai, Tamil Nadu 600115",
     map: "https://maps.app.goo.gl/QXNqiX4HnXW86L648",
     type: "beach",
+    note: "Yahan bas rukna hai. Kahin bhaagna nahi. 🌊",
   },
+
   {
     time: "4:00 – 5:00 PM",
     period: "SUNSET",
     title: "Besant Nagar Beach",
-    subtitle: "Watch the sunset",
+    subtitle: "Watch the sky change",
     emoji: "🌇",
     description:
-      "Slow down, enjoy the sea breeze and watch the beautiful sunset at Besant Nagar Beach.",
+      "Poore din ghoomne ke baad, Besant Nagar Beach par thoda theherna, samundar ki lehron ko dekhna aur dheere-dheere badalte aasman ke rangon ko mehsoos karna. 🌅🌊❤️",
     address: "Besant Nagar, Chennai, Tamil Nadu 600090",
     map: "https://share.google/uErgC5K1nRVaIar3q",
     type: "beach",
+    note: "Shayad din ka sabse khoobsurat moment yahin ho. ❤️",
   },
+
   {
     time: "EVENING",
     period: "DINNER",
     title: "TAMEN – The Local Ramen",
-    subtitle: "Evening snack / dinner",
+    subtitle: "End the day with ramen",
     emoji: "🍜",
     description:
-      "Finish the day with delicious ramen and a relaxed dinner at TAMEN – The Local Ramen.",
+      "Din ka end ek relaxed dinner ke saath. Thakaan hogi, lekin hopefully smile bhi hogi.",
     address: "Besant Nagar, Chennai, Tamil Nadu 600090",
     map: "https://maps.app.goo.gl/qRq7XudWZjQ5ZHh49",
     type: "food",
+    note: "Aur phir officially... Chennai Day complete. ❤️",
   },
 ];
 
@@ -99,12 +111,57 @@ export default function Page() {
   const [showTicket, setShowTicket] = useState(false);
   const [completed, setCompleted] = useState<number[]>([]);
   const [celebration, setCelebration] = useState(false);
+  const [secretOpen, setSecretOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
 
   const completedCount = completed.length;
   const allCompleted = completedCount === places.length;
+  const progress = (completedCount / places.length) * 100;
+
+  useEffect(() => {
+    setMounted(true);
+
+    try {
+      const saved = localStorage.getItem("chennai-day-completed");
+
+      if (saved) {
+        const parsed = JSON.parse(saved);
+
+        if (Array.isArray(parsed)) {
+          setCompleted(parsed);
+        }
+      }
+    } catch {
+      // Ignore localStorage errors.
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!mounted) return;
+
+    localStorage.setItem(
+      "chennai-day-completed",
+      JSON.stringify(completed)
+    );
+  }, [completed, mounted]);
+
+  useEffect(() => {
+    const handleKey = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setCelebration(false);
+        setSecretOpen(false);
+      }
+    };
+
+    window.addEventListener("keydown", handleKey);
+
+    return () => {
+      window.removeEventListener("keydown", handleKey);
+    };
+  }, []);
 
   const smallCelebration = () => {
-    const amount = 35;
+    const amount = 30;
 
     for (let i = 0; i < amount; i++) {
       const particle = document.createElement("div");
@@ -144,6 +201,7 @@ export default function Page() {
       setCompleted((prev) =>
         prev.filter((item) => item !== index)
       );
+
       return;
     }
 
@@ -194,26 +252,36 @@ export default function Page() {
     }, 1800);
   };
 
-  useEffect(() => {
-    const handleKey = (event: KeyboardEvent) => {
-      if (event.key === "Escape") {
-        setCelebration(false);
-      }
-    };
-
-    window.addEventListener("keydown", handleKey);
-
-    return () => {
-      window.removeEventListener("keydown", handleKey);
-    };
-  }, []);
+  const resetDay = () => {
+    setCompleted([]);
+    setCelebration(false);
+    setSecretOpen(false);
+    localStorage.removeItem("chennai-day-completed");
+  };
 
   return (
     <main className="site">
 
-      {/* =====================================================
+      {/* ==============================
+          FLOATING PROGRESS
+      =============================== */}
+
+      <div className="floatingProgress">
+        <span>{completedCount}/7</span>
+
+        <div>
+          <small>DAY PROGRESS</small>
+
+          <div className="miniProgress">
+            <div style={{ width: `${progress}%` }} />
+          </div>
+        </div>
+      </div>
+
+
+      {/* ==============================
           HERO
-      ====================================================== */}
+      =============================== */}
 
       <section className="hero">
 
@@ -247,135 +315,168 @@ export default function Page() {
               href="#itinerary"
               className="navButton"
             >
-              View itinerary ↓
+              View the day ↓
             </a>
 
           </div>
 
         </nav>
 
+
         <div className="heroContent">
 
-          <p className="eyebrow">
-            A ONE-DAY JOURNEY
+          <p className="eyebrow heroReveal">
+            MADE ESPECIALLY FOR YOU
           </p>
 
-          <h1>
+          <p className="heroGreeting heroReveal">
+            Dear Disha,
+          </p>
+
+          <h1 className="heroReveal">
             A Day
             <br />
-            in <span>Chennai</span>
+            in <span>Chennai.</span>
           </h1>
 
           <div className="heroLine" />
 
-          <p className="dedication">
-            Dear Disha <span>♥</span>
+          <p className="heroText heroReveal">
+            Aaj ka din tumhara hai — aur ye din kabhi wapas
+            nahi aayega. Toh sab kuch bhool jao, saari tension
+            chhod do, aur is din ka har ek pal dil khol kar
+            enjoy karo. ❤️✨
           </p>
 
-          <p className="heroText">
-            Aaj ka din tumhara hai — aur ye din kabhi wapas nahi
-            aayega. Toh sab kuch bhool jao, saari tension chhod do,
-            aur is din ka har ek pal dil khol kar enjoy karo. ❤️✨
+          <p className="heroText heroReveal">
+            Aur haan, mujhpar gussa nahi karna…
             <br />
-            <br />
-            Aur haan, mujhpar gussa nahi karna… aaj ke din bilkul
-            bhi nahi. 😂
+            aaj ke din bilkul bhi nahi. 😂
           </p>
 
           <a
             href="#itinerary"
             className="startButton"
           >
-            <span>Start our journey</span>
+            <span>Let's begin</span>
             <strong>↓</strong>
           </a>
 
         </div>
 
+
         <div className="heroBottom">
-          <span>CHENNAI, INDIA</span>
-          <span>ONE BEAUTIFUL DAY</span>
+
+          <span>
+            CHENNAI · INDIA
+          </span>
+
+          <span>
+            ONE DAY · MANY MEMORIES
+          </span>
+
         </div>
 
       </section>
 
 
-      {/* =====================================================
-          INTRO / PERSONAL MESSAGE
-      ====================================================== */}
+      {/* ==============================
+          PERSONAL INTRO
+      =============================== */}
 
       <section className="intro">
 
         <div className="introSmall">
-          THE PLAN
+          SOMETHING I THINK
         </div>
 
         <div className="introText">
 
-          <div className="introTitle">
+          <p className="introMini">
+            Tum aur samudra mein ek similarity hai,
+            according to me… ❤️
+          </p>
 
-            <span className="introNumber">
-              01
-            </span>
+          <div className="oceanThought">
 
-            <h2>
-              One day.
-              <br />
-              <em>One beautiful memory.</em>
-            </h2>
+            <div className="thoughtBlock">
 
-          </div>
+              <span className="thoughtNumber">
+                01
+              </span>
 
+              <h2>
+                Jitna dekho,
+                <br />
+                <em>
+                  utna hi aur dekhne ka mann karta hai.
+                </em>
+              </h2>
 
-          <div className="seaLetter">
-
-            <div className="seaIcon">
-              🌊
             </div>
 
-            <p className="seaOpening">
-              Tum aur samudra mein ek similarity hai,
-              <span> according to me…</span> ❤️
-            </p>
 
-            <div className="seaDivider" />
+            <div className="thoughtDivider">
+              <span>✦</span>
+            </div>
 
-            <p>
-              Jitna dekho,
-              <br />
-              <strong>
-                utna hi aur dekhne ka mann karta hai.
-              </strong>
-            </p>
 
-            <p>
-              Dono ke saath waqt ka pata hi nahi chalta,
-              aur dono apne aap mein ek alag hi sukoon
-              rakhte hain. ✨
-            </p>
+            <div className="thoughtBlock simpleThought">
 
-            <p>
-              Uski lehron ki awaaz se kabhi bore nahi hota,
-              <br />
-              <strong>
-                aur tumhari baaton se bhi nahi.
-              </strong>{" "}
-              ❤️
-            </p>
-
-            <div className="seaPunchline">
-
-              <span className="punchlineLabel">
-                BUT THERE'S ONE MORE SIMILARITY…
+              <span className="thoughtNumber">
+                02
               </span>
 
               <p>
-                Samudra ka paani kabhi-kabhi
-                <br />
-                <em>jalan deta hai,</em>
-                <br />
-                aur tumhari harkatein bhi. 😂❤️
+                Dono ke saath waqt ka pata hi nahi chalta,
+                aur dono apne aap mein ek alag hi sukoon
+                rakhte hain. ✨
               </p>
+
+            </div>
+
+
+            <div className="thoughtBlock simpleThought">
+
+              <span className="thoughtNumber">
+                03
+              </span>
+
+              <p>
+                Uski lehron ki awaaz se kabhi bore nahi hota,
+                <br />
+                aur tumhari baaton se bhi nahi. ❤️
+              </p>
+
+            </div>
+
+
+            <div className="similarityPunchline">
+
+              <div className="punchlineLabel">
+                BUT THERE'S ONE MORE SIMILARITY…
+              </div>
+
+              <div className="punchlineContent">
+
+                <div className="waveMark">
+                  🌊
+                </div>
+
+                <p>
+                  Samudra ka paani kabhi-kabhi
+                  <br />
+
+                  <strong>
+                    jalan deta hai,
+                  </strong>
+
+                  <br />
+
+                  aur tumhari harkatein bhi. 😂❤️
+                </p>
+
+              </div>
 
             </div>
 
@@ -386,9 +487,42 @@ export default function Page() {
       </section>
 
 
-      {/* =====================================================
+      {/* ==============================
+          LITTLE NOTE
+      =============================== */}
+
+      <section className="noteSection">
+
+        <div className="noteCard">
+
+          <span className="noteIcon">
+            ✦
+          </span>
+
+          <p className="noteLabel">
+            ONE SMALL RULE FOR TODAY
+          </p>
+
+          <h2>
+            No overthinking.
+            <br />
+            <em>Bas enjoy karna hai.</em>
+          </h2>
+
+          <p>
+            Aaj koi tension nahi. Koi unnecessary stress nahi.
+            Jo moment saamne hai, bas usko enjoy karna hai.
+            ❤️
+          </p>
+
+        </div>
+
+      </section>
+
+
+      {/* ==============================
           ITINERARY
-      ====================================================== */}
+      =============================== */}
 
       <section
         className="itinerary"
@@ -398,15 +532,13 @@ export default function Page() {
         <div className="sectionHeading">
 
           <div>
-
             <p className="eyebrow dark">
-              THE ITINERARY
+              THE DAY AHEAD
             </p>
 
             <h2>
               Our Chennai day
             </h2>
-
           </div>
 
           <div className="progressBox">
@@ -416,27 +548,23 @@ export default function Page() {
             </span>
 
             <small>
-              LOCATIONS COMPLETED
+              MOMENTS COMPLETED
             </small>
 
             <div className="progressBar">
-
               <div
                 className="progressFill"
                 style={{
-                  width: `${
-                    (completedCount / places.length) * 100
-                  }%`,
+                  width: `${progress}%`,
                 }}
               />
-
             </div>
 
           </div>
 
           <p className="sectionDescription">
-            Follow the day from the first light of morning
-            to dinner at night.
+            From the first light of morning to the last
+            bowl of ramen — take your time.
           </p>
 
         </div>
@@ -455,7 +583,6 @@ export default function Page() {
               selected === index;
 
             return (
-
               <article
                 className={`timelineItem ${
                   isSelected ? "active" : ""
@@ -528,16 +655,20 @@ export default function Page() {
 
                   <div className="cardDetails">
 
-                    <p>
+                    <p className="description">
                       {place.description}
                     </p>
 
 
+                    <div className="memoryNote">
+                      <span>♡</span>
+                      {place.note}
+                    </div>
+
+
                     <div className="address">
 
-                      <span>
-                        📍
-                      </span>
+                      <span>📍</span>
 
                       <span>
                         {place.address}
@@ -630,12 +761,12 @@ export default function Page() {
 
                       {isCompleted ? (
                         <>
-                          ✓ Completed
+                          ✓ Memory collected
                           <span>✨</span>
                         </>
                       ) : (
                         <>
-                          □ Mark Complete
+                          □ Mark this moment
                         </>
                       )}
 
@@ -646,9 +777,7 @@ export default function Page() {
                 </div>
 
               </article>
-
             );
-
           })}
 
         </div>
@@ -661,12 +790,17 @@ export default function Page() {
             <div className="completeDayLine" />
 
             <p>
-              YOU DID IT
+              YOU MADE IT THROUGH THE DAY
             </p>
 
             <h3>
-              All locations completed.
+              Every moment collected.
             </h3>
+
+            <p className="completeDayText">
+              From sunrise to ramen, you made it through
+              the entire Chennai day. ❤️
+            </p>
 
             <button
               type="button"
@@ -683,9 +817,9 @@ export default function Page() {
       </section>
 
 
-      {/* =====================================================
+      {/* ==============================
           SUNSET
-      ====================================================== */}
+      =============================== */}
 
       <section className="visualSection">
 
@@ -694,7 +828,7 @@ export default function Page() {
         <div className="visualContent">
 
           <p className="eyebrow">
-            THE BEST PART
+            THE MOMENT TO SLOW DOWN
           </p>
 
           <h2>
@@ -704,10 +838,10 @@ export default function Page() {
           </h2>
 
           <p>
-            Poore din ghoomne ke baad, Besant Nagar Beach par
-            thoda theherna, samundar ki lehron ko dekhna aur
-            dheere-dheere badalte aasman ke rangon ko mehsoos
-            karna. 🌅🌊❤️
+            Poore din ghoomne ke baad, Besant Nagar Beach
+            par thoda theherna, samundar ki lehron ko dekhna
+            aur dheere-dheere badalte aasman ke rangon ko
+            mehsoos karna. 🌅🌊❤️
           </p>
 
           <div className="sunsetTime">
@@ -727,27 +861,27 @@ export default function Page() {
       </section>
 
 
-      {/* =====================================================
+      {/* ==============================
           FOOD
-      ====================================================== */}
+      =============================== */}
 
       <section className="foodSection">
 
         <div className="foodIntro">
 
           <p className="eyebrow dark">
-            AND OF COURSE...
+            BECAUSE FOOD MATTERS
           </p>
 
           <h2>
-            Good food
+            Good food.
             <br />
-            makes a good day.
+            <em>Better memories.</em>
           </h2>
 
           <p>
-            From breakfast at Ratna Cafe to lunch on ECR,
-            ending with ramen at TAMEN.
+            Breakfast se lekar dinner tak — har meal ko
+            sirf khana nahi, ek aur memory banana hai.
           </p>
 
         </div>
@@ -756,6 +890,7 @@ export default function Page() {
         <div className="foodCards">
 
           <div className="foodCard">
+
             <span>🍽️</span>
 
             <small>
@@ -769,10 +904,12 @@ export default function Page() {
             <p>
               Triplicane
             </p>
+
           </div>
 
 
           <div className="foodCard">
+
             <span>🍛</span>
 
             <small>
@@ -786,10 +923,12 @@ export default function Page() {
             <p>
               ECR
             </p>
+
           </div>
 
 
           <div className="foodCard">
+
             <span>🍜</span>
 
             <small>
@@ -803,6 +942,7 @@ export default function Page() {
             <p>
               The Local Ramen
             </p>
+
           </div>
 
         </div>
@@ -810,9 +950,9 @@ export default function Page() {
       </section>
 
 
-      {/* =====================================================
+      {/* ==============================
           SUMMARY
-      ====================================================== */}
+      =============================== */}
 
       <section className="summary">
 
@@ -849,22 +989,22 @@ export default function Page() {
       </section>
 
 
-      {/* =====================================================
-          FINAL
-      ====================================================== */}
+      {/* ==============================
+          FINAL PERSONAL MESSAGE
+      =============================== */}
 
       <section className="final">
 
         <div className="finalGlow" />
 
         <p className="eyebrow">
-          UNTIL THE DAY ENDS
+          ONE LAST THING
         </p>
 
         <h2>
-          Make it
+          I hope
           <br />
-          <span>memorable.</span>
+          <span>you smile.</span>
         </h2>
 
         <div className="heart">
@@ -878,6 +1018,7 @@ export default function Page() {
           <br />
           a little more beautiful.
           <br />
+          <br />
           I hope I succeeded,
           <br />
           even just a little. ❤️
@@ -887,12 +1028,20 @@ export default function Page() {
           — With love
         </p>
 
+        <button
+          type="button"
+          className="secretButton"
+          onClick={() => setSecretOpen(true)}
+        >
+          There’s one more thing… ❤️
+        </button>
+
       </section>
 
 
-      {/* =====================================================
+      {/* ==============================
           FOOTER
-      ====================================================== */}
+      =============================== */}
 
       <footer>
 
@@ -907,17 +1056,82 @@ export default function Page() {
       </footer>
 
 
-      {/* =====================================================
-          CELEBRATION POPUP
-      ====================================================== */}
+      {/* ==============================
+          SECRET MESSAGE
+      =============================== */}
+
+      {secretOpen && (
+
+        <div
+          className="secretOverlay"
+          onClick={() => setSecretOpen(false)}
+        >
+
+          <div
+            className="secretBox"
+            onClick={(e) =>
+              e.stopPropagation()
+            }
+          >
+
+            <div className="secretHeart">
+              ❤️
+            </div>
+
+            <p>
+              JUST BETWEEN US
+            </p>
+
+            <h2>
+              The day may end...
+              <br />
+              <span>but the memory doesn't.</span>
+            </h2>
+
+            <div className="secretDivider">
+              ✦
+            </div>
+
+            <p className="secretText">
+              I don't know if everything about this day
+              will be perfect.
+              <br />
+              <br />
+              But I wanted you to know that I put a little
+              piece of myself into planning it.
+              <br />
+              <br />
+              So wherever the day takes us,
+              I hope you remember one thing —
+              <br />
+              <strong>
+                you deserved a beautiful day. ❤️
+              </strong>
+            </p>
+
+            <button
+              type="button"
+              onClick={() => setSecretOpen(false)}
+            >
+              Keep this memory ❤️
+            </button>
+
+          </div>
+
+        </div>
+
+      )}
+
+
+      {/* ==============================
+          CELEBRATION
+      =============================== */}
 
       {celebration && (
 
         <div
           className="celebrationOverlay"
-          onClick={() =>
-            setCelebration(false)
-          }
+          onClick={() => setCelebration(false)}
         >
 
           <div
@@ -938,14 +1152,17 @@ export default function Page() {
             <h2>
               You made
               <br />
-              <span>
-                every moment count.
-              </span>
+              <span>every moment count.</span>
             </h2>
 
             <div className="celebrationHearts">
               ❤️ ✨ ❤️ ✨ ❤️
             </div>
+
+            <p className="celebrationMessage">
+              Sunrise, beaches, food, sunset,
+              ramen… and hopefully lots of smiles.
+            </p>
 
             <button
               type="button"
@@ -963,9 +1180,27 @@ export default function Page() {
       )}
 
 
-      {/* =====================================================
+      {/* ==============================
+          RESET
+      =============================== */}
+
+      {completedCount > 0 && (
+
+        <button
+          type="button"
+          className="resetButton"
+          onClick={resetDay}
+          title="Reset day progress"
+        >
+          ↻
+        </button>
+
+      )}
+
+
+      {/* ==============================
           CSS
-      ====================================================== */}
+      =============================== */}
 
       <style jsx>{`
 
@@ -982,6 +1217,11 @@ export default function Page() {
           padding: 0;
         }
 
+        button,
+        a {
+          -webkit-tap-highlight-color: transparent;
+        }
+
         .site {
           background: #f5f1e9;
           color: #191817;
@@ -991,6 +1231,60 @@ export default function Page() {
             Arial,
             Helvetica,
             sans-serif;
+        }
+
+
+        /* =========================
+           FLOATING PROGRESS
+        ========================== */
+
+        .floatingProgress {
+          position: fixed;
+          right: 22px;
+          bottom: 22px;
+          z-index: 5000;
+
+          display: flex;
+          align-items: center;
+          gap: 12px;
+
+          padding: 10px 14px;
+
+          background: rgba(29,27,25,0.92);
+          color: white;
+
+          border: 1px solid rgba(255,255,255,0.12);
+
+          backdrop-filter: blur(12px);
+
+          box-shadow:
+            0 15px 40px rgba(0,0,0,0.18);
+        }
+
+        .floatingProgress > span {
+          font-family: Georgia, serif;
+          font-size: 22px;
+          color: #f0ae5a;
+        }
+
+        .floatingProgress small {
+          display: block;
+          font-size: 7px;
+          letter-spacing: 2px;
+          opacity: 0.6;
+          margin-bottom: 5px;
+        }
+
+        .miniProgress {
+          width: 85px;
+          height: 3px;
+          background: rgba(255,255,255,0.15);
+        }
+
+        .miniProgress div {
+          height: 100%;
+          background: #f0ae5a;
+          transition: width 0.5s ease;
         }
 
 
@@ -1011,15 +1305,14 @@ export default function Page() {
           background-image:
             linear-gradient(
               90deg,
-              rgba(0, 0, 0, 0.72),
-              rgba(0, 0, 0, 0.2)
+              rgba(0,0,0,0.78),
+              rgba(0,0,0,0.25)
             ),
             url("https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=2200&q=85");
 
           background-size: cover;
           background-position: center;
         }
-
 
         .heroOverlay {
           position: absolute;
@@ -1028,13 +1321,12 @@ export default function Page() {
           background:
             radial-gradient(
               circle at 70% 40%,
-              rgba(255, 173, 93, 0.2),
+              rgba(255,173,93,0.22),
               transparent 35%
             );
 
           pointer-events: none;
         }
-
 
         .nav {
           position: relative;
@@ -1049,28 +1341,23 @@ export default function Page() {
           gap: 20px;
         }
 
-
         .logo {
           font-size: 14px;
           font-weight: 800;
           letter-spacing: 3px;
-
           white-space: nowrap;
         }
-
 
         .logo span {
           color: #f6b45c;
           padding: 0 5px;
         }
 
-
         .topActions {
           display: flex;
           align-items: center;
           gap: 10px;
         }
-
 
         .contactButton {
           display: inline-flex;
@@ -1091,13 +1378,11 @@ export default function Page() {
           white-space: nowrap;
         }
 
-
         .callButton {
           background: rgba(255,255,255,0.14);
           border: 1px solid rgba(255,255,255,0.35);
           color: white;
         }
-
 
         .whatsappButton {
           background: #25d366;
@@ -1105,47 +1390,34 @@ export default function Page() {
           color: white;
         }
 
-
         .contactButton:hover {
           transform: translateY(-2px);
         }
-
 
         .callButton:hover {
           background: white;
           color: #191817;
         }
 
-
         .whatsappButton:hover {
           background: #20bd5a;
         }
 
-
         .navButton {
           border: 1px solid rgba(255,255,255,0.4);
-
           color: white;
-
           text-decoration: none;
-
           padding: 11px 18px;
-
           border-radius: 30px;
-
           font-size: 12px;
-
           transition: 0.3s;
-
           white-space: nowrap;
         }
-
 
         .navButton:hover {
           background: white;
           color: black;
         }
-
 
         .heroContent {
           position: relative;
@@ -1153,112 +1425,85 @@ export default function Page() {
 
           padding: 8vh 9vw;
 
-          max-width: 900px;
+          max-width: 950px;
         }
-
 
         .eyebrow {
           font-size: 11px;
           letter-spacing: 4px;
           font-weight: 700;
-
           margin: 0 0 20px;
-
           opacity: 0.75;
         }
 
+        .heroGreeting {
+          font-family: Georgia, serif;
+          font-size: 26px;
+          margin: 0 0 20px;
+          color: #f3d29e;
+        }
 
         .hero h1 {
           font-size: clamp(65px, 11vw, 150px);
-
           line-height: 0.82;
-
           letter-spacing: -7px;
-
           margin: 0;
-
           font-weight: 800;
         }
-
 
         .hero h1 span {
           color: #f7b55d;
         }
 
-
         .heroLine {
           width: 90px;
           height: 2px;
-
           background: #f7b55d;
-
-          margin: 35px 0 18px;
+          margin: 35px 0 25px;
         }
-
-
-        .dedication {
-          font-family: Georgia, serif;
-
-          font-size: 30px;
-
-          margin: 0 0 10px;
-        }
-
-
-        .dedication span {
-          color: #f7b55d;
-        }
-
 
         .heroText {
-          font-size: 15px;
-
-          line-height: 1.7;
-
-          opacity: 0.88;
-
-          max-width: 700px;
+          max-width: 690px;
+          font-family: Georgia, serif;
+          font-size: 18px;
+          line-height: 1.8;
+          color: #eee8df;
+          margin: 0 0 10px;
         }
-
 
         .startButton {
           margin-top: 25px;
 
           display: inline-flex;
-
           align-items: center;
-
           gap: 20px;
 
           background: #f7b55d;
-
           color: #171513;
 
           text-decoration: none;
 
-          padding: 15px 20px;
+          padding: 16px 22px;
 
           font-size: 12px;
-
           font-weight: 800;
 
           text-transform: uppercase;
-
           letter-spacing: 1px;
 
           transition: 0.3s;
-        }
 
+          box-shadow:
+            0 15px 35px rgba(0,0,0,0.2);
+        }
 
         .startButton:hover {
           transform: translateY(-3px);
         }
 
-
         .startButton strong {
           font-size: 18px;
         }
-
 
         .heroBottom {
           position: relative;
@@ -1267,155 +1512,119 @@ export default function Page() {
           padding: 25px 5vw;
 
           display: flex;
-
           justify-content: space-between;
 
           font-size: 9px;
-
           letter-spacing: 3px;
 
           opacity: 0.6;
         }
 
 
-        /* =========================
-           INTRO
-        ========================== */
+        /* =====================================================
+           PERSONAL INTRO — NEW DESIGN
+        ===================================================== */
 
         .intro {
-          position: relative;
-
-          padding: 150px 10vw;
+          padding: 150px 10vw 140px;
 
           display: grid;
 
-          grid-template-columns: 0.7fr 2fr;
+          grid-template-columns: 0.65fr 2fr;
 
-          gap: 80px;
+          gap: 70px;
 
           background:
             radial-gradient(
               circle at 85% 20%,
-              rgba(215,177,131,0.18),
+              rgba(213,169,112,0.12),
               transparent 30%
             ),
             #f5f1e9;
 
+          position: relative;
+
           overflow: hidden;
         }
 
-
         .intro::before {
-          content: "";
-
-          position: absolute;
-
-          width: 420px;
-          height: 420px;
-
-          border: 1px solid rgba(165,103,52,0.12);
-
-          border-radius: 50%;
-
-          right: -180px;
-          top: 100px;
-
-          pointer-events: none;
-        }
-
-
-        .intro::after {
           content: "🌊";
 
           position: absolute;
 
-          right: 8vw;
-          bottom: 40px;
+          right: -35px;
+          bottom: -80px;
 
-          font-size: 70px;
+          font-size: 260px;
 
-          opacity: 0.06;
+          opacity: 0.035;
 
-          transform: rotate(-10deg);
+          transform: rotate(-12deg);
 
           pointer-events: none;
         }
 
-
         .introSmall {
-          position: sticky;
-
-          top: 100px;
-
-          align-self: start;
-
           font-size: 10px;
-
           letter-spacing: 4px;
-
           font-weight: 800;
+          color: #766e64;
 
-          color: #8b623b;
+          padding-top: 12px;
 
-          padding-top: 10px;
-        }
-
-
-        .introSmall::before {
-          content: "";
-
-          display: inline-block;
-
-          width: 35px;
-          height: 1px;
-
-          background: #a56734;
-
-          vertical-align: middle;
-
-          margin-right: 15px;
-        }
-
-
-        .introText {
           position: relative;
-
-          max-width: 850px;
-
           z-index: 1;
         }
 
-
-        .introTitle {
-          margin-bottom: 70px;
+        .introText {
+          max-width: 900px;
 
           position: relative;
+          z-index: 1;
         }
 
+        .introMini {
+          font-family: Georgia, serif;
 
-        .introNumber {
-          display: block;
+          font-size: 23px !important;
 
-          margin-bottom: 18px;
+          line-height: 1.5;
+
+          color: #8b623b !important;
+
+          margin: 0 0 55px !important;
+        }
+
+        .oceanThought {
+          max-width: 850px;
+        }
+
+        .thoughtBlock {
+          position: relative;
+          padding-left: 65px;
+        }
+
+        .thoughtNumber {
+          position: absolute;
+
+          left: 0;
+          top: 8px;
 
           font-size: 9px;
 
-          letter-spacing: 4px;
+          letter-spacing: 2px;
 
           font-weight: 800;
 
-          color: #a56734;
-
-          opacity: 0.8;
+          color: #b28a63;
         }
 
-
-        .intro h2 {
+        .thoughtBlock h2 {
           font-family: Georgia, serif;
 
-          font-size: clamp(48px, 6vw, 85px);
+          font-size: clamp(48px, 6vw, 82px);
 
-          line-height: 0.92;
+          line-height: 0.96;
 
           font-weight: 400;
 
@@ -1424,216 +1633,238 @@ export default function Page() {
           margin: 0;
         }
 
-
-        .intro h2 em {
+        .thoughtBlock h2 em {
           color: #a56734;
 
           font-style: italic;
         }
 
-
-        .seaLetter {
-          position: relative;
-
-          max-width: 720px;
-
-          padding: 55px 55px 60px;
-
-          background:
-            linear-gradient(
-              145deg,
-              rgba(255,255,255,0.82),
-              rgba(238,230,217,0.78)
-            );
-
-          border: 1px solid rgba(165,103,52,0.18);
-
-          box-shadow:
-            0 25px 70px rgba(75,55,35,0.08);
-
-          overflow: hidden;
-        }
-
-
-        .seaLetter::before {
-          content: "";
-
-          position: absolute;
-
-          left: 0;
-          top: 0;
-
-          width: 100%;
-          height: 4px;
+        .thoughtDivider {
+          height: 1px;
 
           background:
             linear-gradient(
               90deg,
-              #a56734,
-              #d7b183,
+              #d8cabb,
               transparent
             );
+
+          margin: 65px 0;
+
+          position: relative;
         }
 
-
-        .seaLetter::after {
-          content: "≈ ≈ ≈";
-
+        .thoughtDivider span {
           position: absolute;
 
-          right: 25px;
-          top: 15px;
+          left: 0;
 
-          font-size: 18px;
+          top: 50%;
 
-          letter-spacing: 5px;
+          transform: translateY(-50%);
+
+          background: #f5f1e9;
+
+          padding-right: 18px;
 
           color: #a56734;
 
-          opacity: 0.15;
+          font-size: 18px;
         }
 
+        .simpleThought {
+          margin-bottom: 38px;
+        }
 
-        .seaIcon {
-          width: 58px;
-          height: 58px;
+        .simpleThought p {
+          max-width: 690px;
+
+          font-family: Georgia, serif;
+
+          font-size: 19px;
+
+          line-height: 1.85;
+
+          color: #6e685f;
+
+          margin: 0;
+        }
+
+        .similarityPunchline {
+          margin-top: 65px;
+
+          padding: 38px 40px;
+
+          background:
+            linear-gradient(
+              135deg,
+              #eee2d2,
+              #f8f4ed
+            );
+
+          border: 1px solid #d7c4aa;
+
+          position: relative;
+
+          overflow: hidden;
+
+          box-shadow:
+            0 20px 55px rgba(75,55,35,0.08);
+        }
+
+        .similarityPunchline::after {
+          content: "";
+
+          position: absolute;
+
+          width: 180px;
+          height: 180px;
+
+          right: -70px;
+          bottom: -90px;
+
+          border-radius: 50%;
+
+          border: 1px solid rgba(165,103,52,0.14);
+
+          box-shadow:
+            0 0 0 25px rgba(165,103,52,0.025),
+            0 0 0 50px rgba(165,103,52,0.02);
+
+          pointer-events: none;
+        }
+
+        .punchlineLabel {
+          font-size: 9px;
+
+          letter-spacing: 3px;
+
+          font-weight: 800;
+
+          color: #a56734;
+
+          margin-bottom: 25px;
+        }
+
+        .punchlineContent {
+          display: flex;
+
+          align-items: flex-start;
+
+          gap: 22px;
+        }
+
+        .waveMark {
+          flex-shrink: 0;
+
+          width: 48px;
+          height: 48px;
 
           display: flex;
 
           align-items: center;
           justify-content: center;
 
+          background: #f5f1e9;
+
+          border: 1px solid #d8c8b5;
+
           border-radius: 50%;
 
-          background: #e8d5bb;
-
-          font-size: 28px;
-
-          margin-bottom: 28px;
+          font-size: 22px;
 
           box-shadow:
-            0 8px 25px rgba(120,80,40,0.12);
+            0 8px 20px rgba(80,55,30,0.08);
         }
 
+        .punchlineContent p {
+          margin: 0;
 
-        .seaOpening {
           font-family: Georgia, serif;
 
-          font-size: clamp(24px, 3vw, 34px) !important;
-
-          line-height: 1.35 !important;
-
-          color: #27221e !important;
-
-          margin: 0 !important;
-
-          max-width: 650px;
-        }
-
-
-        .seaOpening span {
-          color: #a56734;
-
-          font-style: italic;
-        }
-
-
-        .seaDivider {
-          width: 75px;
-
-          height: 1px;
-
-          background: #b98a58;
-
-          margin: 35px 0;
-        }
-
-
-        .seaDivider::after {
-          content: "♥";
-
-          position: relative;
-
-          left: 82px;
-          top: -9px;
-
-          background: #f1e9de;
-
-          padding: 0 8px;
-
-          color: #a56734;
-
-          font-size: 11px;
-        }
-
-
-        .seaLetter > p:not(.seaOpening) {
-          font-family: Georgia, serif;
-
-          font-size: 18px;
-
-          line-height: 1.9;
-
-          color: #625a52;
-
-          margin: 0 0 28px;
-
-          max-width: 620px;
-        }
-
-
-        .seaLetter strong {
-          color: #29231f;
-
-          font-weight: 600;
-        }
-
-
-        .seaPunchline {
-          position: relative;
-
-          margin-top: 45px;
-
-          padding: 28px 30px 30px;
-
-          background: rgba(165,103,52,0.08);
-
-          border-left: 3px solid #a56734;
-        }
-
-
-        .punchlineLabel {
-          display: block;
-
-          margin-bottom: 12px;
-
-          font-size: 8px;
-
-          letter-spacing: 3px;
-
-          font-weight: 800;
-
-          color: #9a7045;
-        }
-
-
-        .seaPunchline p {
-          font-family: Georgia, serif;
-
-          font-size: 20px;
+          font-size: 21px;
 
           line-height: 1.65;
 
-          color: #4e463f;
+          color: #62594f;
+        }
 
-          margin: 0;
+        .punchlineContent strong {
+          color: #a56734;
+
+          font-weight: 400;
+
+          font-style: italic;
+
+          font-size: 28px;
         }
 
 
-        .seaPunchline em {
-          color: #a56734;
+        /* =========================
+           NOTE
+        ========================== */
 
-          font-style: italic;
+        .noteSection {
+          padding: 40px 8vw 130px;
+          background: #f5f1e9;
+        }
+
+        .noteCard {
+          max-width: 850px;
+          margin: auto;
+
+          padding: 65px 50px;
+
+          text-align: center;
+
+          background:
+            linear-gradient(
+              135deg,
+              #eee4d5,
+              #f8f5ef
+            );
+
+          border: 1px solid #d8c8b5;
+
+          position: relative;
+
+          box-shadow:
+            0 25px 70px rgba(75,55,35,0.08);
+        }
+
+        .noteIcon {
+          font-size: 28px;
+          color: #a56734;
+        }
+
+        .noteLabel {
+          margin: 18px 0;
+
+          font-size: 9px;
+          letter-spacing: 4px;
+          font-weight: 800;
+          color: #8b623b;
+        }
+
+        .noteCard h2 {
+          font-family: Georgia, serif;
+          font-weight: 400;
+          font-size: clamp(42px, 6vw, 72px);
+          line-height: 0.95;
+          letter-spacing: -3px;
+          margin: 0 0 25px;
+        }
+
+        .noteCard h2 em {
+          color: #a56734;
+        }
+
+        .noteCard > p:last-child {
+          max-width: 550px;
+          margin: auto;
+          color: #716a62;
+          line-height: 1.8;
+          font-size: 15px;
         }
 
 
@@ -1643,15 +1874,16 @@ export default function Page() {
 
         .itinerary {
           background: #ebe5da;
-
           padding: 120px 8vw;
         }
 
-
         .sectionHeading {
-          display: flex;
+          display: grid;
 
-          justify-content: space-between;
+          grid-template-columns:
+            1fr
+            auto
+            280px;
 
           align-items: end;
 
@@ -1660,13 +1892,10 @@ export default function Page() {
           margin-bottom: 90px;
         }
 
-
         .eyebrow.dark {
           color: #8b623b;
-
           opacity: 1;
         }
-
 
         .sectionHeading h2 {
           font-family: Georgia, serif;
@@ -1682,7 +1911,6 @@ export default function Page() {
           letter-spacing: -3px;
         }
 
-
         .sectionDescription {
           max-width: 280px;
 
@@ -1693,17 +1921,10 @@ export default function Page() {
           font-size: 14px;
         }
 
-
-        /* =========================
-           PROGRESS
-        ========================== */
-
         .progressBox {
-          min-width: 170px;
-
+          min-width: 190px;
           text-align: center;
         }
-
 
         .progressBox > span {
           display: block;
@@ -1714,7 +1935,6 @@ export default function Page() {
 
           color: #8b623b;
         }
-
 
         .progressBox small {
           display: block;
@@ -1728,7 +1948,6 @@ export default function Page() {
           margin: 5px 0 12px;
         }
 
-
         .progressBar {
           width: 100%;
 
@@ -1739,24 +1958,19 @@ export default function Page() {
           overflow: hidden;
         }
 
-
         .progressFill {
           height: 100%;
 
           background: #a56734;
 
-          transition: width 0.5s ease;
+          transition: width 0.6s ease;
         }
-
 
         .timeline {
           max-width: 1000px;
-
           margin: auto;
-
           position: relative;
         }
-
 
         .timelineLine {
           position: absolute;
@@ -1764,14 +1978,12 @@ export default function Page() {
           left: 150px;
 
           top: 0;
-
           bottom: 0;
 
           width: 1px;
 
           background: #cfc6b8;
         }
-
 
         .timelineItem {
           position: relative;
@@ -1790,7 +2002,6 @@ export default function Page() {
           align-items: start;
         }
 
-
         .timelineDot {
           position: relative;
 
@@ -1799,7 +2010,6 @@ export default function Page() {
           grid-column: 2;
 
           width: 40px;
-
           height: 40px;
 
           border-radius: 50%;
@@ -1809,18 +2019,14 @@ export default function Page() {
           border: 1px solid #bfb4a5;
 
           display: flex;
-
           justify-content: center;
-
           align-items: center;
 
           font-size: 11px;
-
           font-weight: 700;
 
           transition: 0.3s;
         }
-
 
         .completedItem .timelineDot {
           background: #a56734;
@@ -1834,26 +2040,21 @@ export default function Page() {
             0 0 25px rgba(165,103,52,0.35);
         }
 
-
         .checkMark {
           font-size: 18px;
         }
 
-
         .time {
           grid-column: 1;
-
           grid-row: 1;
 
           text-align: right;
 
           font-size: 12px;
-
           font-weight: 800;
 
           padding-top: 12px;
         }
-
 
         .time small {
           display: block;
@@ -1867,7 +2068,6 @@ export default function Page() {
           margin-top: 5px;
         }
 
-
         .placeCard {
           grid-column: 3;
 
@@ -1878,13 +2078,12 @@ export default function Page() {
           cursor: pointer;
 
           transition:
-            transform 0.3s,
-            box-shadow 0.3s,
-            border 0.3s;
+            transform 0.35s,
+            box-shadow 0.35s,
+            border 0.35s;
 
           border: 1px solid transparent;
         }
-
 
         .placeCard:hover,
         .placeCard.activeCard {
@@ -1892,11 +2091,10 @@ export default function Page() {
 
           box-shadow:
             0 20px 45px
-            rgba(70, 55, 35, 0.1);
+            rgba(70,55,35,0.1);
 
           border-color: #d8c6ac;
         }
-
 
         .placeCard.completedCard {
           border-color: #a56734;
@@ -1906,24 +2104,18 @@ export default function Page() {
             rgba(165,103,52,0.12);
         }
 
-
         .cardTop {
           display: flex;
-
           justify-content: space-between;
-
           align-items: center;
         }
-
 
         .placeEmoji {
           font-size: 30px;
         }
 
-
         .cardArrow {
           width: 30px;
-
           height: 30px;
 
           border: 1px solid #d5cbbb;
@@ -1931,16 +2123,13 @@ export default function Page() {
           border-radius: 50%;
 
           display: flex;
-
           justify-content: center;
-
           align-items: center;
 
           color: #8b623b;
 
           font-size: 18px;
         }
-
 
         .placeCard h3 {
           font-family: Georgia, serif;
@@ -1953,7 +2142,6 @@ export default function Page() {
 
           letter-spacing: -1px;
         }
-
 
         .subtitle {
           color: #a06f3c;
@@ -1969,31 +2157,56 @@ export default function Page() {
           margin: 0;
         }
 
-
         .cardDetails {
           max-height: 0;
 
           overflow: hidden;
 
-          transition: max-height 0.5s ease;
+          transition: max-height 0.6s ease;
         }
-
 
         .active .cardDetails {
-          max-height: 1500px;
+          max-height: 1600px;
         }
 
-
-        .cardDetails > p {
+        .description {
           color: #686159;
 
-          line-height: 1.7;
+          line-height: 1.8;
 
           font-size: 14px;
 
           margin-top: 25px;
         }
 
+        .memoryNote {
+          display: flex;
+
+          align-items: flex-start;
+
+          gap: 10px;
+
+          margin-top: 22px;
+
+          padding: 16px;
+
+          background: #eee5d8;
+
+          color: #795738;
+
+          font-family: Georgia, serif;
+
+          font-style: italic;
+
+          line-height: 1.5;
+
+          font-size: 14px;
+        }
+
+        .memoryNote span {
+          color: #a56734;
+          font-size: 18px;
+        }
 
         .address {
           display: flex;
@@ -2006,9 +2219,8 @@ export default function Page() {
 
           line-height: 1.5;
 
-          margin-top: 15px;
+          margin-top: 18px;
         }
-
 
         .mapButton {
           display: inline-block;
@@ -2032,15 +2244,9 @@ export default function Page() {
           transition: 0.3s;
         }
 
-
         .mapButton:hover {
           background: #a56734;
         }
-
-
-        /* =========================
-           COMPLETE BUTTON
-        ========================== */
 
         .completeButton {
           width: 100%;
@@ -2068,7 +2274,6 @@ export default function Page() {
           transition: 0.3s;
         }
 
-
         .completeButton:hover {
           background: #1d1b19;
 
@@ -2078,7 +2283,6 @@ export default function Page() {
 
           transform: translateY(-2px);
         }
-
 
         .completeButtonDone {
           background: #a56734;
@@ -2092,17 +2296,10 @@ export default function Page() {
             rgba(165,103,52,0.2);
         }
 
-
         .completeButtonDone:hover {
           background: #7d4d27;
-
           border-color: #7d4d27;
         }
-
-
-        /* =========================
-           TICKET
-        ========================== */
 
         .ticketArea {
           margin-top: 25px;
@@ -2111,7 +2308,6 @@ export default function Page() {
 
           border-top: 1px solid #ddd3c5;
         }
-
 
         .ticketButton {
           border: none;
@@ -2135,13 +2331,10 @@ export default function Page() {
           transition: 0.3s;
         }
 
-
         .ticketButton:hover {
           background: #7d4d27;
-
           transform: translateY(-2px);
         }
-
 
         .ticketBox {
           margin-top: 20px;
@@ -2152,7 +2345,6 @@ export default function Page() {
 
           border: 1px solid #d7cbbb;
         }
-
 
         .ticketTitle {
           font-size: 10px;
@@ -2165,7 +2357,6 @@ export default function Page() {
 
           margin: 0 0 15px;
         }
-
 
         .ticketImage {
           display: block;
@@ -2181,10 +2372,8 @@ export default function Page() {
           border-radius: 4px;
 
           box-shadow:
-            0 10px 25px
-            rgba(0,0,0,0.12);
+            0 10px 25px rgba(0,0,0,0.12);
         }
-
 
         .ticketOpen {
           display: inline-block;
@@ -2218,7 +2407,7 @@ export default function Page() {
 
           text-align: center;
 
-          padding: 60px 30px;
+          padding: 65px 30px;
 
           background:
             linear-gradient(
@@ -2233,9 +2422,9 @@ export default function Page() {
             0 25px 60px
             rgba(80,55,30,0.12);
 
-          animation: completeAppear 0.7s ease;
+          animation:
+            completeAppear 0.7s ease;
         }
-
 
         @keyframes completeAppear {
           from {
@@ -2249,8 +2438,7 @@ export default function Page() {
           }
         }
 
-
-        .completeDayArea > p {
+        .completeDayArea > p:first-child {
           margin: 0 0 10px;
 
           font-size: 10px;
@@ -2262,7 +2450,6 @@ export default function Page() {
           color: #986538;
         }
 
-
         .completeDayArea h3 {
           font-family: Georgia, serif;
 
@@ -2270,9 +2457,16 @@ export default function Page() {
 
           font-size: 38px;
 
-          margin: 0 0 30px;
+          margin: 0 0 15px;
         }
 
+        .completeDayText {
+          color: #70675e;
+
+          font-family: Georgia, serif;
+
+          line-height: 1.7;
+        }
 
         .finishButton {
           border: none;
@@ -2294,19 +2488,694 @@ export default function Page() {
           transition: 0.3s;
 
           box-shadow:
-            0 10px 25px
-            rgba(0,0,0,0.2);
+            0 10px 25px rgba(0,0,0,0.2);
         }
-
 
         .finishButton:hover {
           background: #a56734;
 
           transform: translateY(-4px);
+        }
+
+
+        /* =========================
+           SUNSET
+        ========================== */
+
+        .visualSection {
+          min-height: 750px;
+
+          display: grid;
+
+          grid-template-columns: 1fr 1fr;
+
+          background: #1d1b19;
+
+          color: white;
+        }
+
+        .visualImage {
+          min-height: 600px;
+
+          background-image:
+            linear-gradient(
+              rgba(0,0,0,0.05),
+              rgba(0,0,0,0.25)
+            ),
+            url("https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1500&q=85");
+
+          background-size: cover;
+
+          background-position: center;
+        }
+
+        .visualContent {
+          display: flex;
+
+          flex-direction: column;
+
+          justify-content: center;
+
+          padding: 10vw;
+        }
+
+        .visualContent h2 {
+          font-family: Georgia, serif;
+
+          font-weight: 400;
+
+          font-size: clamp(50px, 6vw, 90px);
+
+          line-height: 0.9;
+
+          letter-spacing: -4px;
+
+          margin: 0 0 35px;
+        }
+
+        .visualContent h2 span {
+          color: #f1ae59;
+        }
+
+        .visualContent > p {
+          max-width: 470px;
+
+          line-height: 1.9;
+
+          color: #c3bdb5;
+
+          font-size: 15px;
+
+          font-family: Georgia, serif;
+        }
+
+        .sunsetTime {
+          margin-top: 35px;
+
+          padding-top: 25px;
+
+          border-top: 1px solid #47433e;
+        }
+
+        .sunsetTime strong {
+          display: block;
+
+          color: #f1ae59;
+
+          font-size: 24px;
+
+          font-family: Georgia, serif;
+        }
+
+        .sunsetTime span {
+          display: block;
+
+          font-size: 9px;
+
+          letter-spacing: 3px;
+
+          margin-top: 8px;
+
+          opacity: 0.6;
+        }
+
+
+        /* =========================
+           FOOD
+        ========================== */
+
+        .foodSection {
+          padding: 130px 8vw;
+
+          background: #f5f1e9;
+        }
+
+        .foodIntro {
+          max-width: 650px;
+
+          margin-bottom: 70px;
+        }
+
+        .foodIntro h2 {
+          font-family: Georgia, serif;
+
+          font-size: clamp(50px, 6vw, 80px);
+
+          font-weight: 400;
+
+          line-height: 0.9;
+
+          letter-spacing: -4px;
+
+          margin: 0 0 30px;
+        }
+
+        .foodIntro h2 em {
+          color: #a56734;
+        }
+
+        .foodIntro > p {
+          color: #6f685f;
+
+          line-height: 1.8;
+        }
+
+        .foodCards {
+          display: grid;
+
+          grid-template-columns:
+            repeat(3, 1fr);
+
+          gap: 20px;
+        }
+
+        .foodCard {
+          background: #ebe5da;
+
+          padding: 40px;
+
+          min-height: 280px;
+
+          transition: 0.3s;
+
+          border: 1px solid transparent;
+        }
+
+        .foodCard:hover {
+          transform: translateY(-6px);
+
+          border-color: #d5c1a6;
+        }
+
+        .foodCard > span {
+          font-size: 40px;
+        }
+
+        .foodCard small {
+          display: block;
+
+          font-size: 8px;
+
+          letter-spacing: 3px;
+
+          color: #96683c;
+
+          font-weight: 800;
+
+          margin-top: 35px;
+        }
+
+        .foodCard h3 {
+          font-family: Georgia, serif;
+
+          font-weight: 400;
+
+          font-size: 34px;
+
+          margin: 8px 0;
+        }
+
+        .foodCard p {
+          margin: 0;
+
+          color: #777067;
+
+          font-size: 13px;
+        }
+
+
+        /* =========================
+           SUMMARY
+        ========================== */
+
+        .summary {
+          background: #d7b183;
+
+          padding: 120px 8vw;
+
+          text-align: center;
+        }
+
+        .summaryInner {
+          max-width: 900px;
+
+          margin: auto;
+        }
+
+        .summary h2 {
+          font-family: Georgia, serif;
+
+          font-size: clamp(50px, 8vw, 110px);
+
+          font-weight: 400;
+
+          letter-spacing: -6px;
+
+          margin: 0;
+        }
+
+        .summary h2 span {
+          color: #704b2e;
+        }
+
+        .summaryText {
+          max-width: 700px;
+
+          margin: 30px auto;
+
+          line-height: 1.8;
+
+          font-size: 14px;
+
+          color: #634b37;
+        }
+
+        .summaryButton {
+          display: inline-block;
+
+          padding: 15px 25px;
+
+          background: #1d1b19;
+
+          color: white;
+
+          text-decoration: none;
+
+          font-size: 11px;
+
+          letter-spacing: 1px;
+
+          text-transform: uppercase;
+
+          transition: 0.3s;
+        }
+
+        .summaryButton:hover {
+          transform: translateY(-3px);
+        }
+
+
+        /* =========================
+           FINAL
+        ========================== */
+
+        .final {
+          position: relative;
+
+          min-height: 800px;
+
+          padding: 130px 20px;
+
+          background: #1b1917;
+
+          color: white;
+
+          text-align: center;
+
+          display: flex;
+
+          flex-direction: column;
+
+          justify-content: center;
+
+          align-items: center;
+
+          overflow: hidden;
+        }
+
+        .finalGlow {
+          position: absolute;
+
+          width: 700px;
+
+          height: 700px;
+
+          border-radius: 50%;
+
+          background:
+            radial-gradient(
+              circle,
+              rgba(238,166,84,0.18),
+              transparent 65%
+            );
+        }
+
+        .final > *:not(.finalGlow) {
+          position: relative;
+          z-index: 1;
+        }
+
+        .final h2 {
+          font-family: Georgia, serif;
+
+          font-weight: 400;
+
+          font-size: clamp(70px, 10vw, 140px);
+
+          line-height: 0.8;
+
+          letter-spacing: -7px;
+
+          margin: 10px 0 35px;
+        }
+
+        .final h2 span {
+          color: #f0ae5a;
+        }
+
+        .heart {
+          color: #f0ae5a;
+
+          font-size: 35px;
+
+          margin: 10px 0 25px;
+
+          animation:
+            heartbeat 1.6s infinite;
+        }
+
+        @keyframes heartbeat {
+
+          0%,
+          100% {
+            transform: scale(1);
+          }
+
+          15% {
+            transform: scale(1.15);
+          }
+
+          30% {
+            transform: scale(1);
+          }
+
+        }
+
+        .finalMessage {
+          font-family: Georgia, serif;
+
+          font-size: 20px;
+
+          line-height: 1.8;
+
+          color: #c8c1b9;
+        }
+
+        .signature {
+          margin-top: 25px;
+
+          color: #f0ae5a;
+
+          font-family: Georgia, serif;
+
+          font-style: italic;
+        }
+
+        .secretButton {
+          margin-top: 35px;
+
+          padding: 14px 22px;
+
+          background: transparent;
+
+          color: #e4d8ca;
+
+          border: 1px solid rgba(240,174,90,0.45);
+
+          cursor: pointer;
+
+          font-size: 11px;
+
+          letter-spacing: 1px;
+
+          transition: 0.3s;
+        }
+
+        .secretButton:hover {
+          background: #f0ae5a;
+          color: #1b1917;
+          transform: translateY(-3px);
+        }
+
+
+        /* =========================
+           POPUPS
+        ========================== */
+
+        .secretOverlay,
+        .celebrationOverlay {
+          position: fixed;
+
+          inset: 0;
+
+          z-index: 100000;
+
+          background:
+            rgba(20,16,12,0.84);
+
+          backdrop-filter: blur(14px);
+
+          display: flex;
+
+          align-items: center;
+
+          justify-content: center;
+
+          padding: 25px;
+
+          animation:
+            overlayAppear 0.4s ease;
+        }
+
+        @keyframes overlayAppear {
+
+          from {
+            opacity: 0;
+          }
+
+          to {
+            opacity: 1;
+          }
+
+        }
+
+        .secretBox {
+          width: min(720px, 100%);
+
+          padding: 70px 40px;
+
+          text-align: center;
+
+          color: white;
+
+          background:
+            radial-gradient(
+              circle at center,
+              #4e3927,
+              #201b17 70%
+            );
+
+          border: 1px solid #a97848;
 
           box-shadow:
-            0 15px 35px
-            rgba(165,103,52,0.3);
+            0 30px 100px rgba(0,0,0,0.5);
+
+          animation:
+            celebrationBoxAppear
+            0.7s
+            cubic-bezier(.17,.89,.32,1.28);
+        }
+
+        .secretHeart {
+          font-size: 60px;
+
+          margin-bottom: 15px;
+        }
+
+        .secretBox > p:first-of-type {
+          font-size: 9px;
+
+          letter-spacing: 4px;
+
+          color: #e9b86d;
+
+          font-weight: 800;
+        }
+
+        .secretBox h2 {
+          font-family: Georgia, serif;
+
+          font-size: clamp(40px, 6vw, 65px);
+
+          font-weight: 400;
+
+          line-height: 0.95;
+
+          letter-spacing: -3px;
+
+          margin: 25px 0;
+        }
+
+        .secretBox h2 span {
+          color: #f0ae5a;
+        }
+
+        .secretDivider {
+          color: #f0ae5a;
+          font-size: 25px;
+          margin: 25px 0;
+        }
+
+        .secretText {
+          font-family: Georgia, serif;
+
+          font-size: 16px;
+
+          line-height: 1.8;
+
+          color: #d7cec4;
+        }
+
+        .secretText strong {
+          color: #f0ae5a;
+        }
+
+        .secretBox button,
+        .celebrationBox button {
+          border: 1px solid #d3a46d;
+
+          background: #d3a46d;
+
+          color: #211c17;
+
+          padding: 15px 30px;
+
+          font-weight: 800;
+
+          cursor: pointer;
+
+          transition: 0.3s;
+        }
+
+        .secretBox button:hover,
+        .celebrationBox button:hover {
+          background: white;
+          border-color: white;
+        }
+
+
+        /* =========================
+           CELEBRATION
+        ========================== */
+
+        .celebrationBox {
+          width: min(700px, 100%);
+
+          padding: 70px 35px;
+
+          text-align: center;
+
+          color: white;
+
+          background:
+            radial-gradient(
+              circle at center,
+              #59402a,
+              #211c17 65%
+            );
+
+          border: 1px solid #b98a58;
+
+          box-shadow:
+            0 30px 100px rgba(0,0,0,0.5);
+
+          animation:
+            celebrationBoxAppear
+            0.7s
+            cubic-bezier(.17,.89,.32,1.28);
+        }
+
+        @keyframes celebrationBoxAppear {
+
+          from {
+            transform: scale(0.7);
+            opacity: 0;
+          }
+
+          to {
+            transform: scale(1);
+            opacity: 1;
+          }
+
+        }
+
+        .celebrationEmoji {
+          font-size: 70px;
+
+          animation:
+            celebrationBounce
+            1s infinite;
+        }
+
+        @keyframes celebrationBounce {
+
+          0%,
+          100% {
+            transform: translateY(0);
+          }
+
+          50% {
+            transform: translateY(-12px);
+          }
+
+        }
+
+        .celebrationBox > p:first-of-type {
+          font-size: 10px;
+
+          letter-spacing: 4px;
+
+          color: #e9b86d;
+
+          font-weight: 800;
+        }
+
+        .celebrationBox h2 {
+          font-family: Georgia, serif;
+
+          font-weight: 400;
+
+          font-size: clamp(45px, 7vw, 75px);
+
+          line-height: 0.95;
+
+          letter-spacing: -3px;
+
+          margin: 20px 0;
+        }
+
+        .celebrationBox h2 span {
+          color: #f0ae5a;
+        }
+
+        .celebrationHearts {
+          font-size: 25px;
+
+          margin: 25px 0 20px;
+
+          letter-spacing: 8px;
+        }
+
+        .celebrationMessage {
+          color: #d7cec4;
+
+          font-family: Georgia, serif;
+
+          line-height: 1.7;
+
+          font-size: 15px;
+
+          margin-bottom: 30px;
         }
 
 
@@ -2333,30 +3202,23 @@ export default function Page() {
             forwards;
         }
 
-
         .celebrationParticle:nth-child(3n) {
           background: #ffffff;
         }
-
 
         .celebrationParticle:nth-child(4n) {
           background: #a56734;
         }
 
-
         .celebrationParticle:nth-child(5n) {
           background: #f3d49e;
         }
 
-
         .celebrationParticle.big {
           width: 12px;
-
           height: 20px;
-
           animation-duration: 1.8s;
         }
-
 
         @keyframes particleFly {
 
@@ -2364,7 +3226,7 @@ export default function Page() {
             opacity: 1;
 
             transform:
-              translate(0, 0)
+              translate(0,0)
               rotate(0deg)
               scale(1);
           }
@@ -2373,17 +3235,12 @@ export default function Page() {
             opacity: 0;
 
             transform:
-              translate(var(--x), var(--y))
+              translate(var(--x),var(--y))
               rotate(var(--r))
               scale(0.5);
           }
 
         }
-
-
-        /* =========================
-           FLASH
-        ========================== */
 
         .celebrationFlash::before {
           content: "";
@@ -2398,9 +3255,9 @@ export default function Page() {
 
           background: white;
 
-          animation: flash 1.8s ease;
+          animation:
+            flash 1.8s ease;
         }
-
 
         @keyframes flash {
 
@@ -2432,596 +3289,6 @@ export default function Page() {
 
 
         /* =========================
-           CELEBRATION POPUP
-        ========================== */
-
-        .celebrationOverlay {
-          position: fixed;
-
-          inset: 0;
-
-          z-index: 100000;
-
-          background:
-            rgba(20,16,12,0.82);
-
-          backdrop-filter: blur(12px);
-
-          display: flex;
-
-          align-items: center;
-
-          justify-content: center;
-
-          padding: 25px;
-
-          animation: overlayAppear 0.4s ease;
-        }
-
-
-        @keyframes overlayAppear {
-
-          from {
-            opacity: 0;
-          }
-
-          to {
-            opacity: 1;
-          }
-
-        }
-
-
-        .celebrationBox {
-          width: min(700px, 100%);
-
-          padding: 70px 35px;
-
-          text-align: center;
-
-          color: white;
-
-          background:
-            radial-gradient(
-              circle at center,
-              #59402a,
-              #211c17 65%
-            );
-
-          border: 1px solid #b98a58;
-
-          box-shadow:
-            0 30px 100px
-            rgba(0,0,0,0.5);
-
-          animation:
-            celebrationBoxAppear
-            0.7s
-            cubic-bezier(.17,.89,.32,1.28);
-        }
-
-
-        @keyframes celebrationBoxAppear {
-
-          from {
-            transform: scale(0.7);
-
-            opacity: 0;
-          }
-
-          to {
-            transform: scale(1);
-
-            opacity: 1;
-          }
-
-        }
-
-
-        .celebrationEmoji {
-          font-size: 70px;
-
-          animation:
-            celebrationBounce
-            1s infinite;
-        }
-
-
-        @keyframes celebrationBounce {
-
-          0%,
-          100% {
-            transform: translateY(0);
-          }
-
-          50% {
-            transform: translateY(-12px);
-          }
-
-        }
-
-
-        .celebrationBox > p {
-          font-size: 10px;
-
-          letter-spacing: 4px;
-
-          color: #e9b86d;
-
-          font-weight: 800;
-        }
-
-
-        .celebrationBox h2 {
-          font-family: Georgia, serif;
-
-          font-weight: 400;
-
-          font-size: clamp(45px, 7vw, 75px);
-
-          line-height: 0.95;
-
-          letter-spacing: -3px;
-
-          margin: 20px 0;
-        }
-
-
-        .celebrationBox h2 span {
-          color: #f0ae5a;
-        }
-
-
-        .celebrationHearts {
-          font-size: 25px;
-
-          margin: 25px 0 35px;
-
-          letter-spacing: 8px;
-        }
-
-
-        .celebrationBox button {
-          border: 1px solid #d3a46d;
-
-          background: #d3a46d;
-
-          color: #211c17;
-
-          padding: 15px 30px;
-
-          font-weight: 800;
-
-          cursor: pointer;
-
-          transition: 0.3s;
-        }
-
-
-        .celebrationBox button:hover {
-          background: white;
-
-          border-color: white;
-        }
-
-
-        /* =========================
-           SUNSET
-        ========================== */
-
-        .visualSection {
-          min-height: 750px;
-
-          display: grid;
-
-          grid-template-columns: 1fr 1fr;
-
-          background: #1d1b19;
-
-          color: white;
-        }
-
-
-        .visualImage {
-          min-height: 600px;
-
-          background-image:
-            linear-gradient(
-              rgba(0,0,0,0.05),
-              rgba(0,0,0,0.25)
-            ),
-            url("https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1500&q=85");
-
-          background-size: cover;
-
-          background-position: center;
-        }
-
-
-        .visualContent {
-          display: flex;
-
-          flex-direction: column;
-
-          justify-content: center;
-
-          padding: 10vw;
-        }
-
-
-        .visualContent h2 {
-          font-family: Georgia, serif;
-
-          font-weight: 400;
-
-          font-size: clamp(50px, 6vw, 90px);
-
-          line-height: 0.9;
-
-          letter-spacing: -4px;
-
-          margin: 0 0 35px;
-        }
-
-
-        .visualContent h2 span {
-          color: #f1ae59;
-        }
-
-
-        .visualContent > p {
-          max-width: 450px;
-
-          line-height: 1.9;
-
-          color: #c3bdb5;
-
-          font-size: 15px;
-        }
-
-
-        .sunsetTime {
-          margin-top: 35px;
-
-          padding-top: 25px;
-
-          border-top: 1px solid #47433e;
-        }
-
-
-        .sunsetTime strong {
-          display: block;
-
-          color: #f1ae59;
-
-          font-size: 24px;
-
-          font-family: Georgia, serif;
-        }
-
-
-        .sunsetTime span {
-          display: block;
-
-          font-size: 9px;
-
-          letter-spacing: 3px;
-
-          margin-top: 8px;
-
-          opacity: 0.6;
-        }
-
-
-        /* =========================
-           FOOD
-        ========================== */
-
-        .foodSection {
-          padding: 130px 8vw;
-
-          background: #f5f1e9;
-        }
-
-
-        .foodIntro {
-          max-width: 650px;
-
-          margin-bottom: 70px;
-        }
-
-
-        .foodIntro h2 {
-          font-family: Georgia, serif;
-
-          font-size: clamp(50px, 6vw, 80px);
-
-          font-weight: 400;
-
-          line-height: 0.9;
-
-          letter-spacing: -4px;
-
-          margin: 0 0 30px;
-        }
-
-
-        .foodIntro > p {
-          color: #6f685f;
-
-          line-height: 1.8;
-        }
-
-
-        .foodCards {
-          display: grid;
-
-          grid-template-columns:
-            repeat(3, 1fr);
-
-          gap: 20px;
-        }
-
-
-        .foodCard {
-          background: #ebe5da;
-
-          padding: 40px;
-
-          min-height: 280px;
-
-          transition: 0.3s;
-        }
-
-
-        .foodCard:hover {
-          transform: translateY(-6px);
-        }
-
-
-        .foodCard > span {
-          font-size: 40px;
-        }
-
-
-        .foodCard small {
-          display: block;
-
-          font-size: 8px;
-
-          letter-spacing: 3px;
-
-          color: #96683c;
-
-          font-weight: 800;
-
-          margin-top: 35px;
-        }
-
-
-        .foodCard h3 {
-          font-family: Georgia, serif;
-
-          font-weight: 400;
-
-          font-size: 34px;
-
-          margin: 8px 0;
-        }
-
-
-        .foodCard p {
-          margin: 0;
-
-          color: #777067;
-
-          font-size: 13px;
-        }
-
-
-        /* =========================
-           SUMMARY
-        ========================== */
-
-        .summary {
-          background: #d7b183;
-
-          padding: 120px 8vw;
-
-          text-align: center;
-        }
-
-
-        .summaryInner {
-          max-width: 900px;
-
-          margin: auto;
-        }
-
-
-        .summary h2 {
-          font-family: Georgia, serif;
-
-          font-size: clamp(50px, 8vw, 110px);
-
-          font-weight: 400;
-
-          letter-spacing: -6px;
-
-          margin: 0;
-        }
-
-
-        .summary h2 span {
-          color: #704b2e;
-        }
-
-
-        .summaryText {
-          max-width: 700px;
-
-          margin: 30px auto;
-
-          line-height: 1.8;
-
-          font-size: 14px;
-
-          color: #634b37;
-        }
-
-
-        .summaryButton {
-          display: inline-block;
-
-          padding: 15px 25px;
-
-          background: #1d1b19;
-
-          color: white;
-
-          text-decoration: none;
-
-          font-size: 11px;
-
-          letter-spacing: 1px;
-
-          text-transform: uppercase;
-
-          transition: 0.3s;
-        }
-
-
-        .summaryButton:hover {
-          transform: translateY(-3px);
-        }
-
-
-        /* =========================
-           FINAL
-        ========================== */
-
-        .final {
-          position: relative;
-
-          min-height: 750px;
-
-          padding: 130px 20px;
-
-          background: #1b1917;
-
-          color: white;
-
-          text-align: center;
-
-          display: flex;
-
-          flex-direction: column;
-
-          justify-content: center;
-
-          align-items: center;
-
-          overflow: hidden;
-        }
-
-
-        .finalGlow {
-          position: absolute;
-
-          width: 600px;
-
-          height: 600px;
-
-          border-radius: 50%;
-
-          background:
-            radial-gradient(
-              circle,
-              rgba(238, 166, 84, 0.18),
-              transparent 65%
-            );
-        }
-
-
-        .final > *:not(.finalGlow) {
-          position: relative;
-
-          z-index: 1;
-        }
-
-
-        .final h2 {
-          font-family: Georgia, serif;
-
-          font-weight: 400;
-
-          font-size: clamp(70px, 10vw, 140px);
-
-          line-height: 0.8;
-
-          letter-spacing: -7px;
-
-          margin: 10px 0 35px;
-        }
-
-
-        .final h2 span {
-          color: #f0ae5a;
-        }
-
-
-        .heart {
-          color: #f0ae5a;
-
-          font-size: 35px;
-
-          margin: 10px 0 25px;
-
-          animation: heartbeat 1.6s infinite;
-        }
-
-
-        @keyframes heartbeat {
-
-          0%,
-          100% {
-            transform: scale(1);
-          }
-
-          15% {
-            transform: scale(1.15);
-          }
-
-          30% {
-            transform: scale(1);
-          }
-
-        }
-
-
-        .finalMessage {
-          font-family: Georgia, serif;
-
-          font-size: 18px;
-
-          line-height: 1.8;
-
-          color: #c8c1b9;
-        }
-
-
-        .signature {
-          margin-top: 25px;
-
-          color: #f0ae5a;
-
-          font-family: Georgia, serif;
-
-          font-style: italic;
-        }
-
-
-        /* =========================
            FOOTER
         ========================== */
 
@@ -3043,49 +3310,59 @@ export default function Page() {
 
 
         /* =========================
+           RESET
+        ========================== */
+
+        .resetButton {
+          position: fixed;
+
+          left: 18px;
+          bottom: 18px;
+
+          z-index: 5000;
+
+          width: 34px;
+          height: 34px;
+
+          border-radius: 50%;
+
+          border: 1px solid rgba(255,255,255,0.15);
+
+          background: rgba(29,27,25,0.85);
+
+          color: #aaa;
+
+          cursor: pointer;
+
+          transition: 0.3s;
+        }
+
+        .resetButton:hover {
+          color: white;
+          transform: rotate(-180deg);
+        }
+
+
+        /* =========================
            TABLET
         ========================== */
 
-        @media (max-width: 900px) {
+        @media (max-width: 1000px) {
 
-          .topActions {
-            gap: 6px;
+          .sectionHeading {
+            grid-template-columns: 1fr 190px;
           }
 
-          .contactButton {
-            padding: 10px 12px;
-          }
-
-          .navButton {
-            padding: 10px 13px;
+          .sectionDescription {
+            grid-column: 1 / -1;
           }
 
           .intro {
             grid-template-columns: 1fr;
-
-            gap: 40px;
-
-            padding: 110px 8vw;
-          }
-
-          .introSmall {
-            position: static;
-          }
-
-          .introTitle {
-            margin-bottom: 50px;
-          }
-
-          .seaLetter {
-            max-width: 100%;
           }
 
           .foodCards {
             grid-template-columns: 1fr;
-          }
-
-          .sectionHeading {
-            flex-wrap: wrap;
           }
 
         }
@@ -3097,29 +3374,28 @@ export default function Page() {
 
         @media (max-width: 800px) {
 
+          .floatingProgress {
+            right: 12px;
+            bottom: 12px;
+          }
+
           .nav {
             padding: 20px 5vw;
-
             align-items: flex-start;
           }
 
-
           .topActions {
             flex-wrap: wrap;
-
             justify-content: flex-end;
           }
-
 
           .navButton {
             display: none;
           }
 
-
           .contactButton span {
             display: none;
           }
-
 
           .contactButton {
             width: 40px;
@@ -3134,105 +3410,119 @@ export default function Page() {
             font-size: 17px;
           }
 
-
           .heroContent {
             padding: 5vh 7vw;
           }
 
+          .heroGreeting {
+            font-size: 22px;
+          }
 
           .hero h1 {
             font-size: 70px;
-
             letter-spacing: -4px;
           }
 
+          .heroText {
+            font-size: 16px;
+          }
 
           .heroBottom {
             display: none;
           }
 
 
+          /* NEW INTRO MOBILE */
+
           .intro {
-            padding: 90px 7vw;
+            grid-template-columns: 1fr;
+
+            padding: 100px 7vw 90px;
+
+            gap: 35px;
           }
 
+          .introMini {
+            font-size: 20px !important;
 
-          .intro h2 {
-            font-size: 52px;
+            margin-bottom: 45px !important;
+          }
+
+          .thoughtBlock {
+            padding-left: 45px;
+          }
+
+          .thoughtBlock h2 {
+            font-size: 48px;
 
             letter-spacing: -3px;
           }
 
-
-          .seaLetter {
-            padding: 40px 25px 45px;
-          }
-
-
-          .seaOpening {
-            font-size: 23px !important;
-
-            line-height: 1.4 !important;
-          }
-
-
-          .seaLetter > p:not(.seaOpening) {
+          .simpleThought p {
             font-size: 17px;
 
             line-height: 1.8;
           }
 
-
-          .seaPunchline {
-            padding: 23px 20px 25px;
-
-            margin-top: 35px;
+          .thoughtDivider {
+            margin: 50px 0;
           }
 
+          .similarityPunchline {
+            margin-top: 55px;
 
-          .seaPunchline p {
+            padding: 30px 22px;
+          }
+
+          .punchlineContent {
+            gap: 15px;
+          }
+
+          .waveMark {
+            width: 42px;
+            height: 42px;
+
             font-size: 18px;
+          }
 
-            line-height: 1.7;
+          .punchlineContent p {
+            font-size: 18px;
+          }
+
+          .punchlineContent strong {
+            font-size: 24px;
           }
 
 
-          .intro::before {
-            width: 280px;
-            height: 280px;
-
-            right: -170px;
+          .noteSection {
+            padding: 20px 5vw 90px;
           }
 
+          .noteCard {
+            padding: 50px 25px;
+          }
 
           .itinerary {
             padding: 90px 5vw;
           }
 
-
           .sectionHeading {
             display: block;
-
             margin-bottom: 60px;
           }
 
-
           .progressBox {
             max-width: 200px;
-
             margin: 30px 0;
           }
-
 
           .sectionDescription {
             margin-top: 25px;
           }
 
-
           .timelineLine {
             left: 20px;
           }
-
 
           .timelineItem {
             grid-template-columns:
@@ -3242,21 +3532,16 @@ export default function Page() {
             gap: 15px;
           }
 
-
           .timelineDot {
             grid-column: 1;
-
             grid-row: 1;
 
             width: 40px;
-
             height: 40px;
           }
 
-
           .time {
             grid-column: 2;
-
             grid-row: 1;
 
             text-align: left;
@@ -3266,12 +3551,9 @@ export default function Page() {
             min-height: 40px;
 
             display: flex;
-
             flex-direction: column;
-
             justify-content: center;
           }
-
 
           .placeCard {
             grid-column: 2;
@@ -3281,61 +3563,49 @@ export default function Page() {
             padding: 25px;
           }
 
-
           .placeCard h3 {
             font-size: 30px;
           }
-
 
           .visualSection {
             grid-template-columns: 1fr;
           }
 
-
           .visualImage {
             min-height: 400px;
           }
-
 
           .visualContent {
             padding: 80px 8vw;
           }
 
-
           .foodSection {
             padding: 90px 7vw;
           }
-
 
           .foodCards {
             grid-template-columns: 1fr;
           }
 
-
           .foodCard {
             min-height: 220px;
           }
-
 
           .summary {
             padding: 90px 7vw;
           }
 
-
           .summary h2 {
             letter-spacing: -3px;
           }
 
-
           .final {
-            min-height: 650px;
+            min-height: 700px;
           }
-
 
           .final h2 {
             letter-spacing: -4px;
           }
-
 
           footer {
             flex-direction: column;
@@ -3356,60 +3626,75 @@ export default function Page() {
 
           .logo {
             font-size: 11px;
-
             letter-spacing: 2px;
           }
-
 
           .nav {
             padding: 18px 4vw;
           }
 
-
           .hero h1 {
             font-size: 62px;
           }
 
-
-          .dedication {
-            font-size: 25px;
-          }
-
-
           .heroText {
-            font-size: 14px;
+            font-size: 15px;
           }
 
+
+          /* INTRO SMALL MOBILE */
 
           .intro {
-            padding: 80px 5vw;
+            padding: 85px 6vw 80px;
           }
 
-
-          .intro h2 {
-            font-size: 45px;
+          .introMini {
+            font-size: 18px !important;
           }
 
-
-          .seaLetter {
-            padding: 35px 20px 40px;
+          .thoughtBlock {
+            padding-left: 38px;
           }
 
+          .thoughtBlock h2 {
+            font-size: 40px;
 
-          .seaOpening {
-            font-size: 21px !important;
+            letter-spacing: -2px;
           }
 
+          .simpleThought p {
+            font-size: 16px;
+          }
 
-          .seaLetter > p:not(.seaOpening) {
+          .similarityPunchline {
+            padding: 28px 18px;
+          }
+
+          .punchlineLabel {
+            font-size: 8px;
+
+            letter-spacing: 2px;
+          }
+
+          .punchlineContent {
+            gap: 12px;
+          }
+
+          .waveMark {
+            width: 38px;
+            height: 38px;
+
+            font-size: 16px;
+          }
+
+          .punchlineContent p {
             font-size: 16px;
 
-            line-height: 1.8;
+            line-height: 1.7;
           }
 
-
-          .seaPunchline p {
-            font-size: 17px;
+          .punchlineContent strong {
+            font-size: 21px;
           }
 
 
@@ -3417,49 +3702,74 @@ export default function Page() {
             font-size: 26px;
           }
 
-
           .ticketButton {
             width: 100%;
           }
-
 
           .ticketBox {
             padding: 10px;
           }
 
-
           .ticketTitle {
             font-size: 9px;
           }
-
 
           .finalMessage {
             font-size: 16px;
           }
 
-
           .completeDayArea {
             padding: 45px 20px;
           }
-
 
           .completeDayArea h3 {
             font-size: 30px;
           }
 
-
           .finishButton {
             width: 100%;
           }
 
+          .secretBox {
+            padding: 50px 20px;
+          }
+
+          .secretBox h2 {
+            font-size: 42px;
+          }
 
           .celebrationBox {
             padding: 50px 20px;
           }
 
-
           .celebrationBox h2 {
             font-size: 45px;
+          }
+
+          .floatingProgress {
+            transform: scale(0.9);
+            transform-origin: bottom right;
+          }
+
+        }
+
+
+        /* =========================
+           REDUCED MOTION
+        ========================== */
+
+        @media (prefers-reduced-motion: reduce) {
+
+          html {
+            scroll-behavior: auto;
+          }
+
+          *,
+          *::before,
+          *::after {
+            animation-duration: 0.01ms !important;
+            animation-iteration-count: 1 !important;
+            transition-duration: 0.01ms !important;
           }
 
         }
