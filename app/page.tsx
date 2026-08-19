@@ -907,7 +907,7 @@ export default function Page() {
           <br />
           I hope I succeeded — even if just a little.
           <br />
-          Because seeing you happy would make this day worth it. ❤️✨
+          
         </p>
 
         <p className="signature">
