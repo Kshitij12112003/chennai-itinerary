@@ -106,17 +106,16 @@ const places = [
 
 export default function Page() {
   const [selected, setSelected] = useState<number | null>(null);
-
   const [showTicket, setShowTicket] = useState(false);
-
   const [completed, setCompleted] = useState<number[]>([]);
-
   const [celebration, setCelebration] = useState(false);
 
   const completedCount = completed.length;
-
   const allCompleted = completedCount === places.length;
 
+  /*
+   * MARK LOCATION COMPLETE
+   */
   const toggleComplete = (index: number) => {
     const alreadyCompleted = completed.includes(index);
 
@@ -133,6 +132,9 @@ export default function Page() {
     smallCelebration();
   };
 
+  /*
+   * SMALL CONFETTI / PARTICLE EFFECT
+   */
   const smallCelebration = () => {
     const amount = 35;
 
@@ -167,6 +169,9 @@ export default function Page() {
     }
   };
 
+  /*
+   * BIG FINAL CELEBRATION
+   */
   const finalCelebration = () => {
     if (!allCompleted) return;
 
@@ -209,6 +214,9 @@ export default function Page() {
     }, 1800);
   };
 
+  /*
+   * ESCAPE KEY CLOSES CELEBRATION
+   */
   useEffect(() => {
     const handleKey = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
@@ -287,10 +295,6 @@ export default function Page() {
             Dear Disha <span>♥</span>
           </p>
 
-          {/* =========================
-              UPDATED MESSAGE
-          ========================== */}
-
           <p className="heroText">
             Aaj ka din tumhara hai — aur ye din kabhi wapas nahi aayega.
             Toh sab kuch bhool jao, saari tension chhod do, aur is din ka
@@ -344,10 +348,20 @@ export default function Page() {
           </h2>
 
           <p>
-            No rushing through a checklist.
-            Just a carefully planned day filled with
-            places to see, food to enjoy, sunsets to watch,
-            and moments to remember.
+            Tum aur samudra mein ek similarity hai, according to me… 🌊❤️
+            <br />
+            <br />
+            Dono ko jitna dekho, utna hi mann karta hai aur dekhte rahoon.
+            Dono ke saath waqt ka pata hi nahi chalta, aur dono apne aap mein
+            ek alag hi sukoon rakhte hain. ✨
+            <br />
+            <br />
+            Uski lehron ki awaaz se kabhi bore nahi hota, aur tumhari baaton
+            se bhi nahi. ❤️
+            <br />
+            <br />
+            Bas ek similarity aur hai… samudra ka paani kabhi-kabhi jalan
+            deta hai, aur tumhari harkatein bhi. 😂❤️
           </p>
 
         </div>
@@ -977,9 +991,11 @@ export default function Page() {
         .hero {
           min-height: 100vh;
           position: relative;
+
           display: flex;
           flex-direction: column;
           justify-content: space-between;
+
           color: white;
 
           background-image:
@@ -1011,6 +1027,7 @@ export default function Page() {
         .nav {
           position: relative;
           z-index: 2;
+
           padding: 28px 5vw;
 
           display: flex;
@@ -1024,6 +1041,7 @@ export default function Page() {
           font-size: 14px;
           font-weight: 800;
           letter-spacing: 3px;
+
           white-space: nowrap;
         }
 
@@ -1164,9 +1182,11 @@ export default function Page() {
         .heroText {
           font-size: 15px;
 
-          line-height: 1.7;
+          line-height: 1.8;
 
           opacity: 0.8;
+
+          max-width: 720px;
         }
 
         .startButton {
@@ -1265,11 +1285,11 @@ export default function Page() {
         }
 
         .intro p {
-          max-width: 550px;
+          max-width: 700px;
 
-          font-size: 16px;
+          font-size: 17px;
 
-          line-height: 1.8;
+          line-height: 1.9;
 
           color: #6e685f;
         }
@@ -1310,16 +1330,6 @@ export default function Page() {
           margin: 0;
 
           letter-spacing: -3px;
-        }
-
-        .sectionDescription {
-          max-width: 280px;
-
-          line-height: 1.6;
-
-          color: #6d675f;
-
-          font-size: 14px;
         }
 
         .progressBox {
@@ -1366,6 +1376,16 @@ export default function Page() {
           background: #a56734;
 
           transition: width 0.5s ease;
+        }
+
+        .sectionDescription {
+          max-width: 280px;
+
+          line-height: 1.6;
+
+          color: #6d675f;
+
+          font-size: 14px;
         }
 
         .timeline {
@@ -2604,6 +2624,11 @@ export default function Page() {
             padding: 90px 7vw;
           }
 
+          .intro p {
+            font-size: 16px;
+            line-height: 1.8;
+          }
+
           .itinerary {
             padding: 90px 5vw;
           }
@@ -2749,6 +2774,7 @@ export default function Page() {
 
           .heroText {
             font-size: 14px;
+            line-height: 1.75;
           }
 
           .placeCard h3 {
