@@ -113,6 +113,9 @@ export default function Page() {
   const completedCount = completed.length;
   const allCompleted = completedCount === places.length;
 
+  /*
+   * MARK LOCATION COMPLETE
+   */
   const toggleComplete = (index: number) => {
     const alreadyCompleted = completed.includes(index);
 
@@ -120,7 +123,6 @@ export default function Page() {
       setCompleted((prev) =>
         prev.filter((item) => item !== index)
       );
-
       return;
     }
 
@@ -128,6 +130,9 @@ export default function Page() {
     smallCelebration();
   };
 
+  /*
+   * SMALL CONFETTI EFFECT
+   */
   const smallCelebration = () => {
     const amount = 35;
 
@@ -162,6 +167,9 @@ export default function Page() {
     }
   };
 
+  /*
+   * BIG FINAL CELEBRATION
+   */
   const finalCelebration = () => {
     if (!allCompleted) return;
 
@@ -204,6 +212,9 @@ export default function Page() {
     }, 1800);
   };
 
+  /*
+   * ESC CLOSES CELEBRATION
+   */
   useEffect(() => {
     const handleKey = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
@@ -221,7 +232,9 @@ export default function Page() {
   return (
     <main className="site">
 
-      {/* HERO */}
+      {/* =====================================================
+          HERO
+      ====================================================== */}
 
       <section className="hero">
 
@@ -238,6 +251,7 @@ export default function Page() {
             <a
               href={`tel:${PHONE}`}
               className="contactButton callButton"
+              aria-label="Call me"
             >
               📞 <span>Call Me</span>
             </a>
@@ -247,6 +261,7 @@ export default function Page() {
               target="_blank"
               rel="noopener noreferrer"
               className="contactButton whatsappButton"
+              aria-label="WhatsApp"
             >
               💬 <span>WhatsApp</span>
             </a>
@@ -280,15 +295,17 @@ export default function Page() {
             Dear Disha <span>♥</span>
           </p>
 
-          {/* UPDATED HERO TEXT */}
-
           <p className="heroText">
             Aaj ka din tumhara hai — aur ye din kabhi wapas nahi aayega.
-            Toh sab kuch bhool jao, saari tension chhod do, aur is din ka
-            har ek pal dil khol kar enjoy karo. ❤️✨
+            <br />
+            Toh sab kuch bhool jao, saari tension chhod do,
+            <br />
+            aur is din ka har ek pal dil khol kar enjoy karo. ❤️✨
             <br />
             <br />
-            Aur haan, mujhpar gussa nahi karna… aaj ke din bilkul bhi nahi. 😂
+            Aur haan, mujhpar gussa nahi karna…
+            <br />
+            aaj ke din bilkul bhi nahi. 😂
           </p>
 
           <a
@@ -316,7 +333,9 @@ export default function Page() {
       </section>
 
 
-      {/* INTRO */}
+      {/* =====================================================
+          INTRO
+      ====================================================== */}
 
       <section className="intro">
 
@@ -332,30 +351,45 @@ export default function Page() {
             <em>Many memories.</em>
           </h2>
 
-          {/* UPDATED INTRO TEXT */}
+          <div className="oceanMessage">
 
-          <p>
-            Tum aur samudra mein ek similarity hai, according to me… 🌊❤️
-            <br />
-            <br />
-            Dono ko jitna dekho, utna hi mann karta hai aur dekhte rahoon.
-            Dono ke saath waqt ka pata hi nahi chalta, aur dono apne aap mein
-            ek alag hi sukoon rakhte hain. ✨
-            <br />
-            <br />
-            Uski lehron ki awaaz se kabhi bore nahi hota, aur tumhari baaton
-            se bhi nahi. ❤️
-            <br />
-            Bas ek similarity aur hai… samudra ka paani kabhi-kabhi jalan
-            deta hai, aur tumhari harkatein bhi. 😂❤️
-          </p>
+            <p className="oceanOpening">
+              Tum aur samudra mein ek similarity hai,
+              according to me… 🌊❤️
+            </p>
+
+            <p>
+              Dono ko jitna dekho, utna hi mann karta hai
+              aur dekhte rahoon.
+            </p>
+
+            <p>
+              Dono ke saath waqt ka pata hi nahi chalta,
+              aur dono apne aap mein ek alag hi sukoon
+              rakhte hain. ✨
+            </p>
+
+            <p>
+              Uski lehron ki awaaz se kabhi bore nahi hota,
+              aur tumhari baaton se bhi nahi. ❤️
+            </p>
+
+            <p className="oceanEnding">
+              Bas ek similarity aur hai…
+              samudra ka paani kabhi-kabhi jalan deta hai,
+              aur tumhari harkatein bhi. 😂❤️
+            </p>
+
+          </div>
 
         </div>
 
       </section>
 
 
-      {/* ITINERARY */}
+      {/* =====================================================
+          ITINERARY
+      ====================================================== */}
 
       <section
         className="itinerary"
@@ -532,6 +566,8 @@ export default function Page() {
                     )}
 
 
+                    {/* VGP TICKET */}
+
                     {place.title ===
                       "VGP Marine Kingdom" && (
 
@@ -588,6 +624,8 @@ export default function Page() {
                     )}
 
 
+                    {/* COMPLETE BUTTON */}
+
                     <button
                       type="button"
                       className={`completeButton ${
@@ -626,6 +664,8 @@ export default function Page() {
         </div>
 
 
+        {/* FINAL COMPLETE BUTTON */}
+
         {allCompleted && (
 
           <div className="completeDayArea">
@@ -655,7 +695,9 @@ export default function Page() {
       </section>
 
 
-      {/* SUNSET */}
+      {/* =====================================================
+          SUNSET
+      ====================================================== */}
 
       <section className="visualSection">
 
@@ -672,8 +714,6 @@ export default function Page() {
             <br />
             <span>the sunset.</span>
           </h2>
-
-          {/* UPDATED SUNSET TEXT */}
 
           <p>
             Poore din ghoomne ke baad, Besant Nagar Beach par
@@ -699,7 +739,9 @@ export default function Page() {
       </section>
 
 
-      {/* FOOD */}
+      {/* =====================================================
+          FOOD
+      ====================================================== */}
 
       <section className="foodSection">
 
@@ -792,7 +834,9 @@ export default function Page() {
       </section>
 
 
-      {/* SUMMARY */}
+      {/* =====================================================
+          SUMMARY
+      ====================================================== */}
 
       <section className="summary">
 
@@ -829,7 +873,9 @@ export default function Page() {
       </section>
 
 
-      {/* FINAL */}
+      {/* =====================================================
+          FINAL
+      ====================================================== */}
 
       <section className="final">
 
@@ -852,11 +898,16 @@ export default function Page() {
         <p className="finalMessage">
           Dear Disha,
           <br />
-          here's to a beautiful day in Chennai,
+          I just wanted to make your day a little more beautiful,
           <br />
-          lots of laughs, good food and
+          fill it with a few smiles, some good memories,
           <br />
-          memories we'll remember.
+          and moments that stay with you a little longer.
+          <br />
+          <br />
+          I hope I succeeded — even if just a little.
+          <br />
+          Because seeing you happy would make this day worth it. ❤️✨
         </p>
 
         <p className="signature">
@@ -866,7 +917,9 @@ export default function Page() {
       </section>
 
 
-      {/* FOOTER */}
+      {/* =====================================================
+          FOOTER
+      ====================================================== */}
 
       <footer>
 
@@ -881,13 +934,17 @@ export default function Page() {
       </footer>
 
 
-      {/* CELEBRATION POPUP */}
+      {/* =====================================================
+          BIG CELEBRATION POPUP
+      ====================================================== */}
 
       {celebration && (
 
         <div
           className="celebrationOverlay"
           onClick={() => setCelebration(false)}
+          role="dialog"
+          aria-modal="true"
         >
 
           <div
@@ -931,6 +988,10 @@ export default function Page() {
       )}
 
 
+      {/* =====================================================
+          CSS
+      ====================================================== */}
+
       <style jsx>{`
 
         * {
@@ -957,6 +1018,11 @@ export default function Page() {
             sans-serif;
         }
 
+
+        /* =========================
+           HERO
+        ========================== */
+
         .hero {
           min-height: 100vh;
           position: relative;
@@ -979,6 +1045,7 @@ export default function Page() {
           background-position: center;
         }
 
+
         .heroOverlay {
           position: absolute;
           inset: 0;
@@ -993,6 +1060,7 @@ export default function Page() {
           pointer-events: none;
         }
 
+
         .nav {
           position: relative;
           z-index: 2;
@@ -1006,6 +1074,7 @@ export default function Page() {
           gap: 20px;
         }
 
+
         .logo {
           font-size: 14px;
           font-weight: 800;
@@ -1014,16 +1083,19 @@ export default function Page() {
           white-space: nowrap;
         }
 
+
         .logo span {
           color: #f6b45c;
           padding: 0 5px;
         }
+
 
         .topActions {
           display: flex;
           align-items: center;
           gap: 10px;
         }
+
 
         .contactButton {
           display: inline-flex;
@@ -1044,11 +1116,13 @@ export default function Page() {
           white-space: nowrap;
         }
 
+
         .callButton {
           background: rgba(255,255,255,0.14);
           border: 1px solid rgba(255,255,255,0.35);
           color: white;
         }
+
 
         .whatsappButton {
           background: #25d366;
@@ -1056,18 +1130,22 @@ export default function Page() {
           color: white;
         }
 
+
         .contactButton:hover {
           transform: translateY(-2px);
         }
+
 
         .callButton:hover {
           background: white;
           color: #191817;
         }
 
+
         .whatsappButton:hover {
           background: #20bd5a;
         }
+
 
         .navButton {
           border: 1px solid rgba(255,255,255,0.4);
@@ -1087,10 +1165,12 @@ export default function Page() {
           white-space: nowrap;
         }
 
+
         .navButton:hover {
           background: white;
           color: black;
         }
+
 
         .heroContent {
           position: relative;
@@ -1101,6 +1181,7 @@ export default function Page() {
           max-width: 900px;
         }
 
+
         .eyebrow {
           font-size: 11px;
           letter-spacing: 4px;
@@ -1110,6 +1191,7 @@ export default function Page() {
 
           opacity: 0.75;
         }
+
 
         .hero h1 {
           font-size: clamp(65px, 11vw, 150px);
@@ -1123,9 +1205,11 @@ export default function Page() {
           font-weight: 800;
         }
 
+
         .hero h1 span {
           color: #f7b55d;
         }
+
 
         .heroLine {
           width: 90px;
@@ -1136,6 +1220,7 @@ export default function Page() {
           margin: 35px 0 18px;
         }
 
+
         .dedication {
           font-family: Georgia, serif;
 
@@ -1144,19 +1229,22 @@ export default function Page() {
           margin: 0 0 10px;
         }
 
+
         .dedication span {
           color: #f7b55d;
         }
+
 
         .heroText {
           font-size: 15px;
 
           line-height: 1.7;
 
-          opacity: 0.8;
+          opacity: 0.9;
 
-          max-width: 750px;
+          max-width: 700px;
         }
+
 
         .startButton {
           margin-top: 25px;
@@ -1186,13 +1274,16 @@ export default function Page() {
           transition: 0.3s;
         }
 
+
         .startButton:hover {
           transform: translateY(-3px);
         }
 
+
         .startButton strong {
           font-size: 18px;
         }
+
 
         .heroBottom {
           position: relative;
@@ -1211,6 +1302,11 @@ export default function Page() {
           opacity: 0.6;
         }
 
+
+        /* =========================
+           INTRO
+        ========================== */
+
         .intro {
           padding: 130px 10vw;
 
@@ -1223,6 +1319,7 @@ export default function Page() {
           background: #f5f1e9;
         }
 
+
         .introSmall {
           font-size: 10px;
 
@@ -1231,9 +1328,11 @@ export default function Page() {
           font-weight: 800;
         }
 
+
         .introText {
           max-width: 800px;
         }
+
 
         .intro h2 {
           font-family: Georgia, serif;
@@ -1246,28 +1345,63 @@ export default function Page() {
 
           letter-spacing: -4px;
 
-          margin: 0 0 30px;
+          margin: 0 0 35px;
         }
+
 
         .intro h2 em {
           color: #a56734;
         }
 
-        .intro p {
-          max-width: 700px;
 
+        .oceanMessage {
+          max-width: 650px;
+        }
+
+
+        .oceanMessage p {
           font-size: 16px;
 
-          line-height: 1.8;
+          line-height: 1.85;
 
           color: #6e685f;
+
+          margin: 0 0 18px;
         }
+
+
+        .oceanMessage .oceanOpening {
+          color: #8b623b;
+
+          font-family: Georgia, serif;
+
+          font-size: 21px;
+
+          line-height: 1.5;
+
+          margin-bottom: 25px;
+        }
+
+
+        .oceanMessage .oceanEnding {
+          color: #594a3d;
+
+          font-weight: 600;
+
+          margin-top: 25px;
+        }
+
+
+        /* =========================
+           ITINERARY
+        ========================== */
 
         .itinerary {
           background: #ebe5da;
 
           padding: 120px 8vw;
         }
+
 
         .sectionHeading {
           display: flex;
@@ -1281,11 +1415,13 @@ export default function Page() {
           margin-bottom: 90px;
         }
 
+
         .eyebrow.dark {
           color: #8b623b;
 
           opacity: 1;
         }
+
 
         .sectionHeading h2 {
           font-family: Georgia, serif;
@@ -1301,11 +1437,28 @@ export default function Page() {
           letter-spacing: -3px;
         }
 
+
+        .sectionDescription {
+          max-width: 280px;
+
+          line-height: 1.6;
+
+          color: #6d675f;
+
+          font-size: 14px;
+        }
+
+
+        /* =========================
+           PROGRESS
+        ========================== */
+
         .progressBox {
           min-width: 170px;
 
           text-align: center;
         }
+
 
         .progressBox > span {
           display: block;
@@ -1316,6 +1469,7 @@ export default function Page() {
 
           color: #8b623b;
         }
+
 
         .progressBox small {
           display: block;
@@ -1329,6 +1483,7 @@ export default function Page() {
           margin: 5px 0 12px;
         }
 
+
         .progressBar {
           width: 100%;
 
@@ -1339,6 +1494,7 @@ export default function Page() {
           overflow: hidden;
         }
 
+
         .progressFill {
           height: 100%;
 
@@ -1347,15 +1503,6 @@ export default function Page() {
           transition: width 0.5s ease;
         }
 
-        .sectionDescription {
-          max-width: 280px;
-
-          line-height: 1.6;
-
-          color: #6d675f;
-
-          font-size: 14px;
-        }
 
         .timeline {
           max-width: 1000px;
@@ -1364,6 +1511,7 @@ export default function Page() {
 
           position: relative;
         }
+
 
         .timelineLine {
           position: absolute;
@@ -1378,6 +1526,7 @@ export default function Page() {
 
           background: #cfc6b8;
         }
+
 
         .timelineItem {
           position: relative;
@@ -1395,6 +1544,7 @@ export default function Page() {
 
           align-items: start;
         }
+
 
         .timelineDot {
           position: relative;
@@ -1426,6 +1576,7 @@ export default function Page() {
           transition: 0.3s;
         }
 
+
         .completedItem .timelineDot {
           background: #a56734;
 
@@ -1438,9 +1589,11 @@ export default function Page() {
             0 0 25px rgba(165,103,52,0.35);
         }
 
+
         .checkMark {
           font-size: 18px;
         }
+
 
         .time {
           grid-column: 1;
@@ -1456,6 +1609,7 @@ export default function Page() {
           padding-top: 12px;
         }
 
+
         .time small {
           display: block;
 
@@ -1467,6 +1621,7 @@ export default function Page() {
 
           margin-top: 5px;
         }
+
 
         .placeCard {
           grid-column: 3;
@@ -1485,6 +1640,7 @@ export default function Page() {
           border: 1px solid transparent;
         }
 
+
         .placeCard:hover,
         .placeCard.activeCard {
           transform: translateY(-4px);
@@ -1496,6 +1652,7 @@ export default function Page() {
           border-color: #d8c6ac;
         }
 
+
         .placeCard.completedCard {
           border-color: #a56734;
 
@@ -1503,6 +1660,7 @@ export default function Page() {
             0 10px 30px
             rgba(165,103,52,0.12);
         }
+
 
         .cardTop {
           display: flex;
@@ -1512,9 +1670,11 @@ export default function Page() {
           align-items: center;
         }
 
+
         .placeEmoji {
           font-size: 30px;
         }
+
 
         .cardArrow {
           width: 30px;
@@ -1536,6 +1696,7 @@ export default function Page() {
           font-size: 18px;
         }
 
+
         .placeCard h3 {
           font-family: Georgia, serif;
 
@@ -1547,6 +1708,7 @@ export default function Page() {
 
           letter-spacing: -1px;
         }
+
 
         .subtitle {
           color: #a06f3c;
@@ -1562,6 +1724,7 @@ export default function Page() {
           margin: 0;
         }
 
+
         .cardDetails {
           max-height: 0;
 
@@ -1570,9 +1733,11 @@ export default function Page() {
           transition: max-height 0.5s ease;
         }
 
+
         .active .cardDetails {
           max-height: 1500px;
         }
+
 
         .cardDetails > p {
           color: #686159;
@@ -1583,6 +1748,7 @@ export default function Page() {
 
           margin-top: 25px;
         }
+
 
         .address {
           display: flex;
@@ -1597,6 +1763,7 @@ export default function Page() {
 
           margin-top: 15px;
         }
+
 
         .mapButton {
           display: inline-block;
@@ -1620,9 +1787,15 @@ export default function Page() {
           transition: 0.3s;
         }
 
+
         .mapButton:hover {
           background: #a56734;
         }
+
+
+        /* =========================
+           COMPLETE BUTTON
+        ========================== */
 
         .completeButton {
           width: 100%;
@@ -1650,6 +1823,7 @@ export default function Page() {
           transition: 0.3s;
         }
 
+
         .completeButton:hover {
           background: #1d1b19;
 
@@ -1659,6 +1833,7 @@ export default function Page() {
 
           transform: translateY(-2px);
         }
+
 
         .completeButtonDone {
           background: #a56734;
@@ -1672,11 +1847,17 @@ export default function Page() {
             rgba(165,103,52,0.2);
         }
 
+
         .completeButtonDone:hover {
           background: #7d4d27;
 
           border-color: #7d4d27;
         }
+
+
+        /* =========================
+           VGP TICKET
+        ========================== */
 
         .ticketArea {
           margin-top: 25px;
@@ -1685,6 +1866,7 @@ export default function Page() {
 
           border-top: 1px solid #ddd3c5;
         }
+
 
         .ticketButton {
           border: none;
@@ -1708,11 +1890,13 @@ export default function Page() {
           transition: 0.3s;
         }
 
+
         .ticketButton:hover {
           background: #7d4d27;
 
           transform: translateY(-2px);
         }
+
 
         .ticketBox {
           margin-top: 20px;
@@ -1723,6 +1907,7 @@ export default function Page() {
 
           border: 1px solid #d7cbbb;
         }
+
 
         .ticketTitle {
           font-size: 10px;
@@ -1735,6 +1920,7 @@ export default function Page() {
 
           margin: 0 0 15px;
         }
+
 
         .ticketImage {
           display: block;
@@ -1753,6 +1939,7 @@ export default function Page() {
             0 10px 25px
             rgba(0,0,0,0.12);
         }
+
 
         .ticketOpen {
           display: inline-block;
@@ -1773,6 +1960,11 @@ export default function Page() {
 
           text-transform: uppercase;
         }
+
+
+        /* =========================
+           COMPLETE DAY
+        ========================== */
 
         .completeDayArea {
           max-width: 700px;
@@ -1799,6 +1991,7 @@ export default function Page() {
           animation: completeAppear 0.7s ease;
         }
 
+
         @keyframes completeAppear {
           from {
             opacity: 0;
@@ -1810,6 +2003,7 @@ export default function Page() {
             transform: translateY(0);
           }
         }
+
 
         .completeDayArea > p {
           margin: 0 0 10px;
@@ -1823,6 +2017,7 @@ export default function Page() {
           color: #986538;
         }
 
+
         .completeDayArea h3 {
           font-family: Georgia, serif;
 
@@ -1832,6 +2027,7 @@ export default function Page() {
 
           margin: 0 0 30px;
         }
+
 
         .finishButton {
           border: none;
@@ -1857,6 +2053,7 @@ export default function Page() {
             rgba(0,0,0,0.2);
         }
 
+
         .finishButton:hover {
           background: #a56734;
 
@@ -1866,6 +2063,11 @@ export default function Page() {
             0 15px 35px
             rgba(165,103,52,0.3);
         }
+
+
+        /* =========================
+           PARTICLES
+        ========================== */
 
         .celebrationParticle {
           position: fixed;
@@ -1886,17 +2088,21 @@ export default function Page() {
             forwards;
         }
 
+
         .celebrationParticle:nth-child(3n) {
           background: #ffffff;
         }
+
 
         .celebrationParticle:nth-child(4n) {
           background: #a56734;
         }
 
+
         .celebrationParticle:nth-child(5n) {
           background: #f3d49e;
         }
+
 
         .celebrationParticle.big {
           width: 12px;
@@ -1905,6 +2111,7 @@ export default function Page() {
 
           animation-duration: 1.8s;
         }
+
 
         @keyframes particleFly {
 
@@ -1928,6 +2135,11 @@ export default function Page() {
 
         }
 
+
+        /* =========================
+           CELEBRATION FLASH
+        ========================== */
+
         .celebrationFlash::before {
           content: "";
 
@@ -1943,6 +2155,7 @@ export default function Page() {
 
           animation: flash 1.8s ease;
         }
+
 
         @keyframes flash {
 
@@ -1972,6 +2185,11 @@ export default function Page() {
 
         }
 
+
+        /* =========================
+           CELEBRATION POPUP
+        ========================== */
+
         .celebrationOverlay {
           position: fixed;
 
@@ -1995,6 +2213,7 @@ export default function Page() {
           animation: overlayAppear 0.4s ease;
         }
 
+
         @keyframes overlayAppear {
 
           from {
@@ -2006,6 +2225,7 @@ export default function Page() {
           }
 
         }
+
 
         .celebrationBox {
           width: min(700px, 100%);
@@ -2035,6 +2255,7 @@ export default function Page() {
             cubic-bezier(.17,.89,.32,1.28);
         }
 
+
         @keyframes celebrationBoxAppear {
 
           from {
@@ -2051,6 +2272,7 @@ export default function Page() {
 
         }
 
+
         .celebrationEmoji {
           font-size: 70px;
 
@@ -2058,6 +2280,7 @@ export default function Page() {
             celebrationBounce
             1s infinite;
         }
+
 
         @keyframes celebrationBounce {
 
@@ -2072,6 +2295,7 @@ export default function Page() {
 
         }
 
+
         .celebrationBox > p {
           font-size: 10px;
 
@@ -2081,6 +2305,7 @@ export default function Page() {
 
           font-weight: 800;
         }
+
 
         .celebrationBox h2 {
           font-family: Georgia, serif;
@@ -2096,9 +2321,11 @@ export default function Page() {
           margin: 20px 0;
         }
 
+
         .celebrationBox h2 span {
           color: #f0ae5a;
         }
+
 
         .celebrationHearts {
           font-size: 25px;
@@ -2107,6 +2334,7 @@ export default function Page() {
 
           letter-spacing: 8px;
         }
+
 
         .celebrationBox button {
           border: 1px solid #d3a46d;
@@ -2124,11 +2352,17 @@ export default function Page() {
           transition: 0.3s;
         }
 
+
         .celebrationBox button:hover {
           background: white;
 
           border-color: white;
         }
+
+
+        /* =========================
+           SUNSET
+        ========================== */
 
         .visualSection {
           min-height: 750px;
@@ -2141,6 +2375,7 @@ export default function Page() {
 
           color: white;
         }
+
 
         .visualImage {
           min-height: 600px;
@@ -2157,6 +2392,7 @@ export default function Page() {
           background-position: center;
         }
 
+
         .visualContent {
           display: flex;
 
@@ -2166,6 +2402,7 @@ export default function Page() {
 
           padding: 10vw;
         }
+
 
         .visualContent h2 {
           font-family: Georgia, serif;
@@ -2181,9 +2418,11 @@ export default function Page() {
           margin: 0 0 35px;
         }
 
+
         .visualContent h2 span {
           color: #f1ae59;
         }
+
 
         .visualContent > p {
           max-width: 500px;
@@ -2195,6 +2434,7 @@ export default function Page() {
           font-size: 15px;
         }
 
+
         .sunsetTime {
           margin-top: 35px;
 
@@ -2202,6 +2442,7 @@ export default function Page() {
 
           border-top: 1px solid #47433e;
         }
+
 
         .sunsetTime strong {
           display: block;
@@ -2212,6 +2453,7 @@ export default function Page() {
 
           font-family: Georgia, serif;
         }
+
 
         .sunsetTime span {
           display: block;
@@ -2225,17 +2467,24 @@ export default function Page() {
           opacity: 0.6;
         }
 
+
+        /* =========================
+           FOOD
+        ========================== */
+
         .foodSection {
           padding: 130px 8vw;
 
           background: #f5f1e9;
         }
 
+
         .foodIntro {
           max-width: 650px;
 
           margin-bottom: 70px;
         }
+
 
         .foodIntro h2 {
           font-family: Georgia, serif;
@@ -2251,11 +2500,13 @@ export default function Page() {
           margin: 0 0 30px;
         }
 
+
         .foodIntro > p {
           color: #6f685f;
 
           line-height: 1.8;
         }
+
 
         .foodCards {
           display: grid;
@@ -2265,6 +2516,7 @@ export default function Page() {
 
           gap: 20px;
         }
+
 
         .foodCard {
           background: #ebe5da;
@@ -2276,13 +2528,16 @@ export default function Page() {
           transition: 0.3s;
         }
 
+
         .foodCard:hover {
           transform: translateY(-6px);
         }
 
+
         .foodCard > span {
           font-size: 40px;
         }
+
 
         .foodCard small {
           display: block;
@@ -2298,6 +2553,7 @@ export default function Page() {
           margin-top: 35px;
         }
 
+
         .foodCard h3 {
           font-family: Georgia, serif;
 
@@ -2308,6 +2564,7 @@ export default function Page() {
           margin: 8px 0;
         }
 
+
         .foodCard p {
           margin: 0;
 
@@ -2315,6 +2572,11 @@ export default function Page() {
 
           font-size: 13px;
         }
+
+
+        /* =========================
+           SUMMARY
+        ========================== */
 
         .summary {
           background: #d7b183;
@@ -2324,11 +2586,13 @@ export default function Page() {
           text-align: center;
         }
 
+
         .summaryInner {
           max-width: 900px;
 
           margin: auto;
         }
+
 
         .summary h2 {
           font-family: Georgia, serif;
@@ -2342,9 +2606,11 @@ export default function Page() {
           margin: 0;
         }
 
+
         .summary h2 span {
           color: #704b2e;
         }
+
 
         .summaryText {
           max-width: 700px;
@@ -2357,6 +2623,7 @@ export default function Page() {
 
           color: #634b37;
         }
+
 
         .summaryButton {
           display: inline-block;
@@ -2378,9 +2645,15 @@ export default function Page() {
           transition: 0.3s;
         }
 
+
         .summaryButton:hover {
           transform: translateY(-3px);
         }
+
+
+        /* =========================
+           FINAL
+        ========================== */
 
         .final {
           position: relative;
@@ -2406,6 +2679,7 @@ export default function Page() {
           overflow: hidden;
         }
 
+
         .finalGlow {
           position: absolute;
 
@@ -2423,11 +2697,13 @@ export default function Page() {
             );
         }
 
+
         .final > *:not(.finalGlow) {
           position: relative;
 
           z-index: 1;
         }
+
 
         .final h2 {
           font-family: Georgia, serif;
@@ -2443,9 +2719,11 @@ export default function Page() {
           margin: 10px 0 35px;
         }
 
+
         .final h2 span {
           color: #f0ae5a;
         }
+
 
         .heart {
           color: #f0ae5a;
@@ -2456,6 +2734,7 @@ export default function Page() {
 
           animation: heartbeat 1.6s infinite;
         }
+
 
         @keyframes heartbeat {
 
@@ -2474,6 +2753,7 @@ export default function Page() {
 
         }
 
+
         .finalMessage {
           font-family: Georgia, serif;
 
@@ -2482,7 +2762,14 @@ export default function Page() {
           line-height: 1.8;
 
           color: #c8c1b9;
+
+          max-width: 800px;
+
+          margin-left: auto;
+
+          margin-right: auto;
         }
+
 
         .signature {
           margin-top: 25px;
@@ -2493,6 +2780,11 @@ export default function Page() {
 
           font-style: italic;
         }
+
+
+        /* =========================
+           FOOTER
+        ========================== */
 
         footer {
           background: #11100f;
@@ -2509,6 +2801,11 @@ export default function Page() {
 
           letter-spacing: 3px;
         }
+
+
+        /* =========================
+           TABLET
+        ========================== */
 
         @media (max-width: 900px) {
 
@@ -2538,6 +2835,11 @@ export default function Page() {
 
         }
 
+
+        /* =========================
+           MOBILE
+        ========================== */
+
         @media (max-width: 800px) {
 
           .nav {
@@ -2546,19 +2848,23 @@ export default function Page() {
             align-items: flex-start;
           }
 
+
           .topActions {
             flex-wrap: wrap;
 
             justify-content: flex-end;
           }
 
+
           .navButton {
             display: none;
           }
 
+
           .contactButton span {
             display: none;
           }
+
 
           .contactButton {
             width: 40px;
@@ -2573,9 +2879,11 @@ export default function Page() {
             font-size: 17px;
           }
 
+
           .heroContent {
             padding: 5vh 7vw;
           }
+
 
           .hero h1 {
             font-size: 70px;
@@ -2583,9 +2891,18 @@ export default function Page() {
             letter-spacing: -4px;
           }
 
+
+          .heroText {
+            font-size: 14px;
+
+            line-height: 1.75;
+          }
+
+
           .heroBottom {
             display: none;
           }
+
 
           .intro {
             grid-template-columns: 1fr;
@@ -2593,9 +2910,28 @@ export default function Page() {
             padding: 90px 7vw;
           }
 
+
+          .intro h2 {
+            margin-bottom: 35px;
+          }
+
+
+          .oceanMessage p {
+            font-size: 15px;
+
+            line-height: 1.8;
+          }
+
+
+          .oceanMessage .oceanOpening {
+            font-size: 19px;
+          }
+
+
           .itinerary {
             padding: 90px 5vw;
           }
+
 
           .sectionHeading {
             display: block;
@@ -2603,19 +2939,23 @@ export default function Page() {
             margin-bottom: 60px;
           }
 
+
           .progressBox {
             max-width: 200px;
 
             margin: 30px 0;
           }
 
+
           .sectionDescription {
             margin-top: 25px;
           }
 
+
           .timelineLine {
             left: 20px;
           }
+
 
           .timelineItem {
             grid-template-columns:
@@ -2624,6 +2964,7 @@ export default function Page() {
 
             gap: 15px;
           }
+
 
           .timelineDot {
             grid-column: 1;
@@ -2634,6 +2975,7 @@ export default function Page() {
 
             height: 40px;
           }
+
 
           .time {
             grid-column: 2;
@@ -2655,6 +2997,7 @@ export default function Page() {
             justify-content: center;
           }
 
+
           .placeCard {
             grid-column: 2;
 
@@ -2663,49 +3006,72 @@ export default function Page() {
             padding: 25px;
           }
 
+
           .placeCard h3 {
             font-size: 30px;
           }
+
 
           .visualSection {
             grid-template-columns: 1fr;
           }
 
+
           .visualImage {
             min-height: 400px;
           }
+
 
           .visualContent {
             padding: 80px 8vw;
           }
 
+
           .foodSection {
             padding: 90px 7vw;
           }
+
 
           .foodCards {
             grid-template-columns: 1fr;
           }
 
+
           .foodCard {
             min-height: 220px;
           }
+
 
           .summary {
             padding: 90px 7vw;
           }
 
+
           .summary h2 {
             letter-spacing: -3px;
           }
 
+
           .final {
-            min-height: 650px;
+            min-height: 700px;
+
+            padding-left: 7vw;
+
+            padding-right: 7vw;
           }
+
 
           .final h2 {
             letter-spacing: -4px;
           }
+
+
+          .finalMessage {
+            font-size: 16px;
+
+            line-height: 1.8;
+          }
+
 
           footer {
             flex-direction: column;
@@ -2717,6 +3083,11 @@ export default function Page() {
 
         }
 
+
+        /* =========================
+           SMALL MOBILE
+        ========================== */
+
         @media (max-width: 450px) {
 
           .logo {
@@ -2724,57 +3095,75 @@ export default function Page() {
             letter-spacing: 2px;
           }
 
+
           .nav {
             padding: 18px 4vw;
           }
+
 
           .hero h1 {
             font-size: 62px;
           }
 
+
           .dedication {
             font-size: 25px;
           }
 
+
           .heroText {
-            font-size: 14px;
+            font-size: 13px;
+
+            line-height: 1.8;
           }
+
 
           .placeCard h3 {
             font-size: 26px;
           }
 
+
           .ticketButton {
             width: 100%;
           }
+
 
           .ticketBox {
             padding: 10px;
           }
 
+
           .ticketTitle {
             font-size: 9px;
           }
 
+
           .finalMessage {
-            font-size: 16px;
+            font-size: 15px;
+
+            line-height: 1.85;
           }
+
 
           .completeDayArea {
             padding: 45px 20px;
           }
 
+
           .completeDayArea h3 {
             font-size: 30px;
           }
+
 
           .finishButton {
             width: 100%;
           }
 
+
           .celebrationBox {
             padding: 50px 20px;
           }
+
 
           .celebrationBox h2 {
             font-size: 45px;
