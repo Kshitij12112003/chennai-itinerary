@@ -113,9 +113,6 @@ export default function Page() {
   const completedCount = completed.length;
   const allCompleted = completedCount === places.length;
 
-  /*
-   * MARK LOCATION COMPLETE
-   */
   const toggleComplete = (index: number) => {
     const alreadyCompleted = completed.includes(index);
 
@@ -128,13 +125,9 @@ export default function Page() {
     }
 
     setCompleted((prev) => [...prev, index]);
-
     smallCelebration();
   };
 
-  /*
-   * SMALL CONFETTI / PARTICLE EFFECT
-   */
   const smallCelebration = () => {
     const amount = 35;
 
@@ -169,9 +162,6 @@ export default function Page() {
     }
   };
 
-  /*
-   * BIG FINAL CELEBRATION
-   */
   const finalCelebration = () => {
     if (!allCompleted) return;
 
@@ -214,9 +204,6 @@ export default function Page() {
     }, 1800);
   };
 
-  /*
-   * ESCAPE KEY CLOSES CELEBRATION
-   */
   useEffect(() => {
     const handleKey = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
@@ -234,9 +221,7 @@ export default function Page() {
   return (
     <main className="site">
 
-      {/* =====================================================
-          HERO
-      ====================================================== */}
+      {/* HERO */}
 
       <section className="hero">
 
@@ -295,6 +280,8 @@ export default function Page() {
             Dear Disha <span>♥</span>
           </p>
 
+          {/* UPDATED HERO TEXT */}
+
           <p className="heroText">
             Aaj ka din tumhara hai — aur ye din kabhi wapas nahi aayega.
             Toh sab kuch bhool jao, saari tension chhod do, aur is din ka
@@ -329,9 +316,7 @@ export default function Page() {
       </section>
 
 
-      {/* =====================================================
-          INTRO
-      ====================================================== */}
+      {/* INTRO */}
 
       <section className="intro">
 
@@ -347,6 +332,8 @@ export default function Page() {
             <em>Many memories.</em>
           </h2>
 
+          {/* UPDATED INTRO TEXT */}
+
           <p>
             Tum aur samudra mein ek similarity hai, according to me… 🌊❤️
             <br />
@@ -359,7 +346,6 @@ export default function Page() {
             Uski lehron ki awaaz se kabhi bore nahi hota, aur tumhari baaton
             se bhi nahi. ❤️
             <br />
-            <br />
             Bas ek similarity aur hai… samudra ka paani kabhi-kabhi jalan
             deta hai, aur tumhari harkatein bhi. 😂❤️
           </p>
@@ -369,9 +355,7 @@ export default function Page() {
       </section>
 
 
-      {/* =====================================================
-          ITINERARY
-      ====================================================== */}
+      {/* ITINERARY */}
 
       <section
         className="itinerary"
@@ -403,7 +387,6 @@ export default function Page() {
             </small>
 
             <div className="progressBar">
-
               <div
                 className="progressFill"
                 style={{
@@ -412,7 +395,6 @@ export default function Page() {
                   }%`,
                 }}
               />
-
             </div>
 
           </div>
@@ -673,9 +655,7 @@ export default function Page() {
       </section>
 
 
-      {/* =====================================================
-          SUNSET
-      ====================================================== */}
+      {/* SUNSET */}
 
       <section className="visualSection">
 
@@ -693,10 +673,13 @@ export default function Page() {
             <span>the sunset.</span>
           </h2>
 
+          {/* UPDATED SUNSET TEXT */}
+
           <p>
-            After a full day of exploring, we'll slow down
-            at Besant Nagar Beach and watch the sky change
-            colours.
+            Poore din ghoomne ke baad, Besant Nagar Beach par
+            thoda theherna, samundar ki lehron ko dekhna aur
+            dheere-dheere badalte aasman ke rangon ko mehsoos
+            karna. 🌅🌊❤️
           </p>
 
           <div className="sunsetTime">
@@ -716,9 +699,7 @@ export default function Page() {
       </section>
 
 
-      {/* =====================================================
-          FOOD
-      ====================================================== */}
+      {/* FOOD */}
 
       <section className="foodSection">
 
@@ -811,9 +792,7 @@ export default function Page() {
       </section>
 
 
-      {/* =====================================================
-          SUMMARY
-      ====================================================== */}
+      {/* SUMMARY */}
 
       <section className="summary">
 
@@ -850,9 +829,7 @@ export default function Page() {
       </section>
 
 
-      {/* =====================================================
-          FINAL
-      ====================================================== */}
+      {/* FINAL */}
 
       <section className="final">
 
@@ -889,9 +866,7 @@ export default function Page() {
       </section>
 
 
-      {/* =====================================================
-          FOOTER
-      ====================================================== */}
+      {/* FOOTER */}
 
       <footer>
 
@@ -906,9 +881,7 @@ export default function Page() {
       </footer>
 
 
-      {/* =====================================================
-          BIG CELEBRATION POPUP
-      ====================================================== */}
+      {/* CELEBRATION POPUP */}
 
       {celebration && (
 
@@ -957,10 +930,6 @@ export default function Page() {
 
       )}
 
-
-      {/* =====================================================
-          CSS
-      ====================================================== */}
 
       <style jsx>{`
 
@@ -1182,11 +1151,11 @@ export default function Page() {
         .heroText {
           font-size: 15px;
 
-          line-height: 1.8;
+          line-height: 1.7;
 
           opacity: 0.8;
 
-          max-width: 720px;
+          max-width: 750px;
         }
 
         .startButton {
@@ -1287,9 +1256,9 @@ export default function Page() {
         .intro p {
           max-width: 700px;
 
-          font-size: 17px;
+          font-size: 16px;
 
-          line-height: 1.9;
+          line-height: 1.8;
 
           color: #6e685f;
         }
@@ -2217,13 +2186,13 @@ export default function Page() {
         }
 
         .visualContent > p {
-          max-width: 400px;
+          max-width: 500px;
 
-          line-height: 1.8;
+          line-height: 1.9;
 
           color: #c3bdb5;
 
-          font-size: 14px;
+          font-size: 15px;
         }
 
         .sunsetTime {
@@ -2624,11 +2593,6 @@ export default function Page() {
             padding: 90px 7vw;
           }
 
-          .intro p {
-            font-size: 16px;
-            line-height: 1.8;
-          }
-
           .itinerary {
             padding: 90px 5vw;
           }
@@ -2774,7 +2738,6 @@ export default function Page() {
 
           .heroText {
             font-size: 14px;
-            line-height: 1.75;
           }
 
           .placeCard h3 {
