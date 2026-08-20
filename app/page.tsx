@@ -1083,9 +1083,9 @@ export default function Page() {
             </p>
 
             <h2>
-              The day may end...
+              ....................
               <br />
-              <span>but the memory doesn't.</span>
+              <span>....................</span>
             </h2>
 
             <div className="secretDivider">
@@ -1093,19 +1093,16 @@ export default function Page() {
             </div>
 
             <p className="secretText">
-              I don't know if everything about this day
-              will be perfect.
+              ...............................................
               <br />
               <br />
-              But I wanted you to know that I put a little
-              piece of myself into planning it.
+              ................................................
               <br />
               <br />
-              So wherever the day takes us,
-              I hope you remember one thing —
+              .............................................................
               <br />
               <strong>
-                you deserved a beautiful day. ❤️
+                ........................................................
               </strong>
             </p>
 
